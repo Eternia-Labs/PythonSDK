@@ -7,8 +7,8 @@ class Client:
 		self.session = AsyncHTTPClient()
 		self.timeout = 5
 		self.url = "http://127.0.0.1:5000"
-		self.service = None
-		self.apiversion = None
+		self.service = 'SCMLExperiments'
+		self.apiversion = 'V2'
 
 	def seturl(self, url):
 		self.url = url
@@ -25,7 +25,7 @@ class Client:
 	def GetAPIVersion(self):
 		return self.apiversion
 
-	def makeRequest(self, httpmethod,op,pid, body=None,org='scnoop'):
+	def makeRequestV2(self, httpmethod,op,pid, body=None,org='scnoop'):
 		headers = None
 		import json
 		if httpmethod == 'GET':
