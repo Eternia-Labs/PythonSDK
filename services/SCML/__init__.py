@@ -1,3 +1,4 @@
 import sys
-sys.path.append('/Users/mahendren/Desktop/PythonSDK/services/SCML/')
+import os
+sys.path.append(os.path.split(os.path.abspath(os.getcwd()))[0])
 from .main import *

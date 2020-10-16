@@ -1,14 +1,21 @@
 from tornado.httpclient import AsyncHTTPClient, HTTPRequest
 from tornado.ioloop import IOLoop
 from tornado.escape import json_encode
-class Client:
+import json
+		
+class ClientV2:
 
 	def __init__(self):
 		self.session = AsyncHTTPClient()
 		self.timeout = 5
-		self.url = "http://127.0.0.1:5000"
-		self.service = 'SCMLExperiments'
-		self.apiversion = 'V2'
+		self.url = None
+		self.service = None
+		self.apiversion = 'v2'
+	
+	def initializeForService(self,prefix,uri,port,service):
+		self.url = prefix + "://"+ uri + ":" + str(port) +"/" + self.apiversion + "/actions"
+		print("setting url")
+		self.service = service
 
 	def seturl(self, url):
 		self.url = url
@@ -19,25 +26,22 @@ class Client:
 	def GetHTTPClient(self):
 		return self.session
 
-	def GetContext(self):
-		return self.service
-
-	def GetAPIVersion(self):
+	def getApiVersion(self):
 		return self.apiversion
 
-	def makeRequestV2(self, httpmethod,op,pid, body=None,org='scnoop'):
+	def makeRequest(self, httpmethod,op,pid, body=None,org='scnoop'):
 		headers = None
-		import json
+		
 		if httpmethod == 'GET':
 			print(httpmethod)
 			body = None
 		else:
 			body = json.dumps(body)
 			headers = {"content-type":"application/json"}
-		#print(body)
-		finalURI = self.geturl() + '/v2/actions?op='+ op + '&org=' + org + '&pid='+str(pid)
+		
+		finalURI = self.geturl() + '?op='+ str(op) + '&org=' + str(org) + '&pid='+str(pid)
 		req = HTTPRequest(finalURI,method = httpmethod, body = body,request_timeout = self.timeout,headers=headers)
-		#print("REQUEST",req.__dict__)
+		
 		async def toExecute():
 			try:
 				response = await self.session.fetch(req)
@@ -55,5 +59,5 @@ class Client:
 		self.session.close()
 
 def getClient():
-	client = Client()
+	client = ClientV2()
 	return client
