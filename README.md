@@ -9,3 +9,10 @@
 #### 5. Test in venv
 
 pip install -e /path/to/the/root_folder/containing/setup.py  for installing a build distribution from local folder
+
+
+##### Use:
+
+from scmls.services.SCML import *  
+se = SCMLExperiments()  
+se.getExperiment(PID,EXPID)  
