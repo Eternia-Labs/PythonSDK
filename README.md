@@ -13,6 +13,6 @@ pip install -e /path/to/the/root_folder/containing/setup.py  for installing a bu
 
 ##### Use:
 
-from scmls.services.SCML import *  
+from optimus.services.SCML import *  
 se = SCMLExperiments()  
 se.getExperiment(PID,EXPID)  
