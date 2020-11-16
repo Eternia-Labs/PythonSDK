@@ -28,11 +28,11 @@ class SCMLExperiments:
             if os.getenv(PORT):
                 print("port is not set")
                 port = os.getenv(PORT)
+                self.scmlClient.initializeForService(prefix,uri,port,'SCMLExperiments')
             else:
-                port = 5000
-            self.scmlClient.initializeForService(prefix,uri,port,'SCMLExperiments')
-        except Exception:
-            raise Exception()
+                self.scmlClient.initializeForService(prefix,uri,'SCMLExperiments')
+        except Exception as e:
+            print("Exception "+ str(e))
         
 
     def getExperiment(self,pid,expid):
@@ -84,4 +84,8 @@ class SCMLExperiments:
         for item in res:
             ids.append(item['ExperimentId'])
         return ids
+
+    def createExperiment(self,pid,expJson):
+        res =  self.scmlClient.makeRequest('POST','scmlexperiments.createExperiment',pid=pid,body=json.loads(expJson))
+        return res
 
