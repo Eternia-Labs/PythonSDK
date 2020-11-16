@@ -11,7 +11,7 @@
 ##### Use:
 
 from optimus.services.SCML import *  
-import json
+import json 
 config_json = json.dumps(configjson)
 se = SCMLExperiments()  
 se.getExperiment(PID,EXPID)  
