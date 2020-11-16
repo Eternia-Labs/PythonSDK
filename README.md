@@ -8,7 +8,7 @@
 4. pip install -e /path/to/the/root_folder/containing/setup.py  for installing a build distribution from local folder
 
 
-##### Use:
+##### Usage:
 
 from optimus.services.SCML import *  
 import json 
