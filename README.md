@@ -12,7 +12,10 @@
 
 from optimus.services.SCML import *  
 import json 
+
 config_json = json.dumps(configjson)
+
 se = SCMLExperiments()  
+
 se.getExperiment(PID,EXPID)  
 se.createExperiment(pid,config_json)
