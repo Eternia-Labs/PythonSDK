@@ -23,7 +23,9 @@ tasks.listTaskCategories()
 ##### Sample:
 
 from SCTasks.services.Tasks import * 
-import json 
+import json
+
+tasks = SCTasks()
 
 json_data = {
     "category": "My General Cleaning",
@@ -36,8 +38,7 @@ json_data = {
 }
 
 jsondata = json.dumps(json_data)
-tasks = SCTasks() 
-
+ 
 tasks.addCustomTaskBuilding('test',jsondata)
 
 
