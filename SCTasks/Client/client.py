@@ -3,14 +3,14 @@ from tornado.ioloop import IOLoop
 from tornado.escape import json_encode
 import json
 		
-class ClientV2:
+class ClientV1:
 
 	def __init__(self):
 		self.session = AsyncHTTPClient()
 		self.timeout = 5
 		self.url = None
 		self.service = None
-		self.apiversion = 'v2'
+		self.apiversion = 'v1'
 	
 	def initializeForService(self,prefix,uri,port,service):
 		self.url = prefix + "://"+ uri + ":" + str(port) +"/" + self.apiversion + "/actions"
@@ -29,7 +29,7 @@ class ClientV2:
 	def getApiVersion(self):
 		return self.apiversion
 
-	def makeRequest(self, httpmethod,op,pid, body=None,org='scnoop'):
+	def makeRequest(self, httpmethod, op, propid=None, body=None, org='SMARTCLEAN', pid='scnoop'):
 		headers = None
 		
 		if httpmethod == 'GET':
@@ -39,7 +39,11 @@ class ClientV2:
 			body = json.dumps(body)
 			headers = {"content-type":"application/json"}
 		
-		finalURI = self.geturl() + '?op='+ str(op) + '&org=' + str(org) + '&pid='+str(pid)
+		if propid: 
+			finalURI = self.geturl() + '?op='+ str(op) + '&org=' + str(org) + '&pid='+str(pid) + '&propid='+str(propid)
+		else:
+			finalURI = self.geturl() + '?op='+ str(op) + '&org=' + str(org) + '&pid='+str(pid)
+		
 		req = HTTPRequest(finalURI,method = httpmethod, body = body,request_timeout = self.timeout,headers=headers)
 		
 		async def toExecute():
@@ -59,5 +63,5 @@ class ClientV2:
 		self.session.close()
 
 def getClient():
-	client = ClientV2()
+	client = ClientV1()
 	return client

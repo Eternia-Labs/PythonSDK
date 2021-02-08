@@ -1,8 +1,1 @@
-attrs==19.3.0
-cffi==1.14.0
-idna==2.9
-multidict==4.7.6
-pycares==3.1.1
-pycparser==2.20
 tornado==6.0.4
-yarl==1.4.2
