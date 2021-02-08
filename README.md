@@ -32,7 +32,7 @@ json_data = {
     "task": "test",
     "asset" : "Corners/Crevices",
     "measure" : 22,
-    "measureName" : "Square Feet",json
+    "measureName" : "Square Feet",
     "skills" :  ["Cleaning"],
     "timeInMinutes" : 8
 }
