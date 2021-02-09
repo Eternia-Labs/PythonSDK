@@ -69,7 +69,7 @@ class SCTasks:
         res =  self.Client.makeRequest('POST','sctasks.addTasksinTaskGroup',pid=pid,body=json.loads(expJson))       
         return res
 
-    def deleteTasksinTaskGroup(self,pid,expJson):
+    def deleteTasksInTaskGroup(self,pid,expJson):
         res =  self.Client.makeRequest('POST','sctasks.deleteTasksinTaskGroup',pid=pid,body=json.loads(expJson))       
         return res
     
