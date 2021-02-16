@@ -10,12 +10,35 @@
 
 ##### Usage:
 
-from optimus.services.SCML import *  
+from SCTasks.services.Tasks import * 
 import json 
 
-config_json = json.dumps(configjson)
+jsondata = json.dumps(json_data)
 
-se = SCMLExperiments()  
+tasks = SCTasks() 
 
-se.getExperiment(PID,EXPID)  
-se.createExperiment(pid,config_json)
+tasks.addCustomTaskBuilding(PID,jsondata) 
+tasks.listTaskCategories()
+
+##### Sample:
+
+from SCTasks.services.Tasks import * 
+import json
+
+tasks = SCTasks()
+
+json_data = {
+    "category": "My General Cleaning",
+    "task": "test",
+    "asset" : "Corners/Crevices",
+    "measure" : 22,
+    "measureName" : "Square Feet",
+    "skills" :  ["Cleaning"],
+    "timeInMinutes" : 8
+}
+
+jsondata = json.dumps(json_data)
+ 
+tasks.addCustomTaskBuilding('test',jsondata)
+
+
