@@ -66,7 +66,13 @@ class ClientV1:
 			requests.get(finalURI)
 		else:
 			body = json.dumps(body)
-			response = requests.post(finalURI, data = body, headers = self.headers, timeout = self.timeout)
+			
+			try:
+				response = requests.post(finalURI, data = body, headers = self.headers, timeout = self.timeout)
+			
+			except Exception as e:
+				print("inside exception",str(e))
+				return e
 		
 		return response
 
