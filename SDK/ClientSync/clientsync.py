@@ -1,10 +1,26 @@
 import json
 import requests
+import os
 
+signing_status = 'SIGNING_STATUS_PYTHONSDK'
+user_name = 'USER_NAME_PYTHONSDK'
+user_password = 'PASSWORD_PYTHONSDK'
 
-body = '{"uname": "sc_shikha","passwd": "Brownie@123"}'
-access_token = requests.post("https://console.smartclean.io/api/auth/login/token",body)
-access_token = json.loads(access_token.text)["access_token"]
+name = os.getenv(user_name)
+password = os.getenv(user_password)
+
+if not os.getenv(signing_status):
+	signing = "Disabled"
+else:
+	signing = "Enabled"
+
+if signing == "Enabled":
+	body = {"uname": name,"passwd": password}
+	body = json.dumps(body)
+	access_token = requests.post("https://console.smartclean.io/api/unauth/v1/login",body)
+	# print(json.loads(access_token.text))
+	access_token = json.loads(access_token.text)["access_token"]
+
 
 class ClientV1:
 
@@ -14,16 +30,17 @@ class ClientV1:
 		self.service = None
 		self.headers = None
 		self.timeout = 10
+		print("Message from Sync Client:")
+		print("Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'.")
 
 	def initializeForService(self,prefix,uri,apiversion,port=None,service='SCGrids'):
-
-		if port:
+		
+		if signing == "Disabled":
 			self.url = prefix + "://"+ uri + ":" + str(port) +"/" + apiversion + "/actions"
 			self.headers = {"content-type":"application/json"}
-		else:
+		elif signing == "Enabled":
 			self.url = prefix + "://"+ uri + "/" + apiversion + "/actions"
 			self.headers = {"content-type":"application/json", "x-sc-identity":"external", "Authorization":access_token}
-			# print(self.url)
 		print("setting url")
 		self.service = service
 

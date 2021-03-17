@@ -21,19 +21,19 @@ class SCBi:
                 uri = os.getenv(HOST)
             else:
                 uri="console.smartclean.io/api/scbi"
-                print("Host is not set")
+                print("SCBI: Host is not set")
             if os.getenv(PROTOCOL):
                 prefix = os.getenv(PROTOCOL)
             else:
                 prefix = 'https'
-                print("protocol env variable is not set")
+                print("SCBI: protocol env variable is not set")
             if os.getenv(PORT):
                 port = os.getenv(PORT)
                 print(prefix,uri,port)
                 self.Async_client.initializeForService(prefix,uri,port,apiversion,service='SCBi')
                 self.Sync_client.initializeForService(prefix,uri,port,apiversion,service='SCBi')
             else:
-                print("Port is not set")
+                print("SCBI: Port is not set")
                 self.Async_client.initializeForService(prefix,uri,apiversion,service='SCBi')
                 self.Sync_client.initializeForService(prefix,uri,apiversion,service='SCBi')
         except Exception as e:
