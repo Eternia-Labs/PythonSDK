@@ -60,19 +60,18 @@ class ClientV1:
 		else:
 			finalURI = self.geturl() + '?op='+ str(op) + '&org=' + str(org) + '&pid='+str(pid)
 		print(finalURI)
-		if httpmethod == 'GET':
-			print(httpmethod)
-			body = None
-			requests.get(finalURI)
-		else:
-			body = json.dumps(body)
-			
-			try:
+		try:
+			if httpmethod == 'GET':
+				print(httpmethod)
+				body = None
+				requests.get(finalURI)
+			else:
+				body = json.dumps(body)
 				response = requests.post(finalURI, data = body, headers = self.headers, timeout = self.timeout)
 			
-			except Exception as e:
-				print("inside exception",str(e))
-				return e
+		except Exception as e:
+			print("inside exception",str(e))
+			return e
 		
 		return response
 
