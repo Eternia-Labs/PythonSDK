@@ -88,9 +88,9 @@ class ClientV1:
 		io_loop = IOLoop.current()
 		return io_loop.run_sync(toExecute)
 	
-	def __del__(self):
-		print("Deleting client")
-		self.session.close()
+	# def __del__(self):
+	# 	print("Deleting client")
+	# 	self.session.close()
 
 def getClient():
 	client = ClientV1()
