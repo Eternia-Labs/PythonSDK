@@ -21,19 +21,19 @@ class SCDashboard:
                 uri = os.getenv(HOST)
             else:
                 uri="console.smartclean.io/api/widgets"
-                print("Host is not set")
+                print("SCDASHBOARD: Host is not set")
             if os.getenv(PROTOCOL):
                 prefix = os.getenv(PROTOCOL)
             else:
                 prefix = 'https'
-                print("protocol env variable is not set")
+                print("SCDASHBOARD: protocol env variable is not set")
             if os.getenv(PORT):
                 port = os.getenv(PORT)
                 print(prefix,uri,port)
                 self.Async_client.initializeForService(prefix,uri,port,apiversion,service='SCDashboard')
                 self.Sync_client.initializeForService(prefix,uri,port,apiversion,service='SCDashboard')
             else:
-                print("Port is not set")
+                print("SCDASHBOARD: Port is not set")
                 self.Async_client.initializeForService(prefix,uri,apiversion,service='SCDashboard')
                 self.Sync_client.initializeForService(prefix,uri,apiversion,service='SCDashboard')
         except Exception as e:

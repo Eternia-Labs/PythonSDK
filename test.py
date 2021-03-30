@@ -11,13 +11,16 @@ bi = SCBi()
 
 
 org = 'SMARTCLEAN'
-PropId = '3b749a681d14446292b6c79b48403bbd'
+## For not testing locally. 
+PropId = '3b749a681d14446292b6c79b48403bbd' 
+## For testing locally.
+# PropId = 'ff47033487244e17a6d96df2a233a1a0' 
 
-Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId,client='Sync')
-print(Property.json())
-# print(Property.status_code)
-
-
+Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId)
+## For Sync
+print(Property.json()) 
+## For Async
+print(Property) 
 
 
 

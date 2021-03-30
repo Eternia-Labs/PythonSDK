@@ -1,5 +1,15 @@
 # PythonSDK
 
+## Important Step:
+
+For installing Pycurl mentioned in the requirements.txt
+
+export CPPFLAGS=-I/usr/local/opt/openssl/include
+export LDFLAGS=-L/usr/local/opt/openssl/lib
+pip install pycurl --global-option="--with-openssl"
+
+If not installed in this way, it would throw error : ImportError: pycurl: libcurl link-time ssl backend (openssl) is different from compile-time ssl backend.
+
 ## Setup steps
 
 1. Clone repo
@@ -57,29 +67,34 @@ print(Property)
 ##### Set the environment variables for the corresponding service:
 
 ###### SC_DASHBOARD
-HOST = 'SC_DASHBOARD_HOST'
-PROTOCOL = 'SC_DASHBOARD_HTTP_PROTOCOL'
-PORT = 'SC_DASHBOARD_PORT'
+'SC_DASHBOARD_HOST'
+'SC_DASHBOARD_HTTP_PROTOCOL'
+'SC_DASHBOARD_PORT'
 
 ###### SC_GRIDS
-HOST = 'SC_GRIDS_HOST'
-PROTOCOL = 'SC_GRIDS_HTTP_PROTOCOL'
-PORT = 'SC_GRIDS_PORT'
+'SC_GRIDS_HOST'
+'SC_GRIDS_HTTP_PROTOCOL'
+'SC_GRIDS_PORT'
 
 ###### SC_BI
-HOST = 'SC_BI_HOST'
-PROTOCOL = 'SC_BI_HTTP_PROTOCOL'
-PORT = 'SC_BI_PORT'
+'SC_BI_HOST'
+'SC_BI_HTTP_PROTOCOL'
+'SC_BI_PORT'
 
 ###### SC_METRICS
-HOST = 'SC_METRICS_HOST'
-PROTOCOL = 'SC_METRICS_HTTP_PROTOCOL'
-PORT = 'SC_METRICS_PORT'
+'SC_METRICS_HOST'
+'SC_METRICS_HTTP_PROTOCOL'
+'SC_METRICS_PORT'
 
 ###### PROTOCOL is http or https.
 
 #### For not using it locally:
 
-###### Simply run the code and use it. Authentication for now is added but it will be removed in future and will be left on user to provide it.
+Signing is not enabled. It is "Disabled" by default. You can enable it by setting the environment variables.
+
+'SIGNING_STATUS_PYTHONSDK' ("Enabled")
+'USER_NAME_PYTHONSDK' (<user_name>)
+'PASSWORD_PYTHONSDK' (<password>)
+
 
 
