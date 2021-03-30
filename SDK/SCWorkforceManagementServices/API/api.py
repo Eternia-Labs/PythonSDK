@@ -9,7 +9,7 @@ PROTOCOL = 'SC_WORKFORCEMANAGEMENT_HTTP_PROTOCOL'
 PORT = 'SC_WORKFORCEMANAGEMENT_PORT'
 apiversion = 'v1'
 
-class SCBi:
+class SCWorkforcemanagement:
     def __init__(self): 
         self.Async_client = clientasync.getClient()
         self.Sync_client = clientsync.getClient()
