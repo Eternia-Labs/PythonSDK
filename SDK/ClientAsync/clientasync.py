@@ -3,14 +3,28 @@ from tornado.ioloop import IOLoop
 from tornado.escape import json_encode
 import json
 import requests
+import os
 
 AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 
+signing_status = 'SIGNING_STATUS_PYTHONSDK'
+user_name = 'USER_NAME_PYTHONSDK'
+user_password = 'PASSWORD_PYTHONSDK'
 
-body = '{"uname": "smartclean","passwd": "SmartClean@321#"}'
-access_token = requests.post("https://console.smartclean.io/api/unauth/v1/login",body)
-print(json.loads(access_token.text))
-access_token = json.loads(access_token.text)["access_token"]
+name = os.getenv(user_name)
+password = os.getenv(user_password)
+
+if not os.getenv(signing_status):
+	signing = "Disabled"
+else:
+	signing = os.getenv(signing_status)
+
+if signing == "Enabled":
+	body = {"uname": name,"passwd": password}
+	body = json.dumps(body)
+	access_token = requests.post("https://console.smartclean.io/api/unauth/v1/login",body)
+	# print(json.loads(access_token.text))
+	access_token = json.loads(access_token.text)["access_token"]
 
 
 class ClientV1:
@@ -21,16 +35,17 @@ class ClientV1:
 		self.url = None
 		self.service = None
 		self.headers = None
+		print("Message from Async Client:")
+		print("Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'.")
 		
 	def initializeForService(self,prefix,uri,apiversion,port=None,service='SCGrids'):
-		print(prefix,self.url)
-		if port:
+
+		if signing == "Disabled":
 			self.url = prefix + "://"+ uri + ":" + str(port) +"/" + apiversion + "/actions"
 			self.headers = {"content-type":"application/json"}
-		else:
+		elif signing == "Enabled":
 			self.url = prefix + "://"+ uri + "/" + apiversion + "/actions"
 			self.headers = {"content-type":"application/json", "x-sc-identity":"external", "Authorization":access_token}
-			# print(self.url)
 		print("setting url")
 		self.service = service
 
@@ -60,7 +75,7 @@ class ClientV1:
 			finalURI = self.geturl() + '?op='+ str(op) + '&org=' + str(org) + '&pid='+str(pid)
 		
 		req = HTTPRequest(finalURI,method = httpmethod, body = body,request_timeout = self.timeout,headers=self.headers)
-		print(req.headers)
+		# print(req.headers)
 		async def toExecute():
 			try:
 				response = await self.session.fetch(req)
@@ -73,9 +88,9 @@ class ClientV1:
 		io_loop = IOLoop.current()
 		return io_loop.run_sync(toExecute)
 	
-	def __del__(self):
-		print("Deleting client")
-		self.session.close()
+	# def __del__(self):
+	# 	print("Deleting client")
+	# 	self.session.close()
 
 def getClient():
 	client = ClientV1()

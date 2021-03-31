@@ -21,12 +21,12 @@ class SCGrids:
                 uri = os.getenv(HOST)
             else:
                 uri="console.smartclean.io/api/scgrids"
-                print("Host is not set")
+                print("SCGRIDS: Host is not set")
             if os.getenv(PROTOCOL):
                 prefix = os.getenv(PROTOCOL)
             else:
                 prefix = 'https'
-                print("protocol env variable is not set")
+                print("SCGRIDS: protocol env variable is not set")
             if os.getenv(PORT):
                 port = os.getenv(PORT)
                 print(prefix,uri,port)
@@ -34,7 +34,7 @@ class SCGrids:
                 self.Sync_client.initializeForService(prefix,uri,apiversion,port,service='SCGrids')
                
             else:
-                print("Port is not set")
+                print("SCGRIDS: Port is not set")
                 self.Async_client.initializeForService(prefix,uri,apiversion,service='SCGrids')
                 self.Sync_client.initializeForService(prefix,uri,apiversion,service='SCGrids')
                 
