@@ -1,42 +1,27 @@
 import os
-import json
 from pprint import pformat
 
-# from SDK.SCGridsServices.API import *
-# print('Warning: Everything imported from Grids service directory...')
-# from SDK.SCDashboardServices.API import *
-# from SDK.SCMetricsServices.API import *
-# from SDK.SCBIServices.API import *
-# grids = SCGrids()
-# dashboard = SCDashboard()
-# metrics = SCMetrics()
-# bi = SCBi()
+from dotenv import load_dotenv
 
 LOAD_ENV_VARS = True
+EXTRACT_DATA_FROM_SDK_RESPONSE = True
 
-# region Default Data for tests
-TEST_ORG = 'SMARTCLEAN'
-TEST_PID = 'scnoop'
-TEST_PROP_ID_LOCAL = 'ff47033487244e17a6d96df2a233a1a0'
-TEST_PROP_ID_REMOTE = '3b749a681d14446292b6c79b48403bbd'
-CLIENT_TYPE_ASYNC = 'Async'
 CLIENT_TYPE_SYNC = 'Sync'
-# endregion
+CLIENT_TYPE_ASYNC = 'Async'
 
 
-def test_grids_function(org: str = None, pid: str = None, local: bool = True, test_client=CLIENT_TYPE_ASYNC):
+def test_get_property_info(org: str = None, pid: str = None, prop_id: str = None, test_client=CLIENT_TYPE_ASYNC):
 
     print('Starting test for a function in Grids service..')
 
     if org is None:
-        org = TEST_ORG
-    if pid is None:
-        pid = TEST_PID
+        org = os.environ['TEST_ORG']
 
-    if local is True:
-        prop_id = TEST_PROP_ID_LOCAL
-    else:
-        prop_id = TEST_PROP_ID_REMOTE
+    if pid is None:
+        pid = os.environ['TEST_PID']
+
+    if prop_id is None:
+        prop_id = os.environ['TEST_PROP_ID']
 
     from SDK.SCGridsServices.API import SCGrids
     print('SCGrids imported from respective service directory.')
@@ -63,38 +48,38 @@ def test_grids_function(org: str = None, pid: str = None, local: bool = True, te
         print(pformat(response_content))
     # endregion
 
-
-def _test_get_reporting_services_for_principal():
-    from SDK.SCBIServices.API import SCBi
-    bi = SCBi()
-    request_body = {}
-    response = bi.getReportingServicesForPrincipalOrg(
-        TEST_ORG, TEST_PID, expJson=json.dumps(request_body), client='Sync')
-    response_content = response.json()
-    print(pformat(response_content))
+    if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
+        desired_data = response_content['data']
+        print('Extracted "data" from response. Data is:')
+        print(pformat(desired_data))
+    else:
+        print('Response content is:')
+        print(pformat(response_content))
 
 
 def load_env_vars(dotenv_filepath: str = None):
 
-    if dotenv_filepath is not None:
-        # print('Loading env variables from dotenv file')
-        # root_dir = os.path.dirname(os.path.abspath(__file__))
-        # filepath = f'{root_dir}/env-dev.env'
+    print('Loading variables from standard environment file into environment...')
+    if dotenv_filepath is None:
+        root_dir = os.path.dirname(os.path.abspath(__file__))
+        print(f'Root directory is:')
+        print(root_dir)
+        filepath = f'{root_dir}/env-dev.env'
+        print('env file path is:')
+        print(filepath)
+    else:
         raise Exception('Currently not loading vars from dotenv file (TODO later)')
 
-    os.environ['USER_NAME_PYTHONSDK'] = 'scbot'
-    print('USER_NAME_PYTHONSDK set in environment.')
-    os.environ['PASSWORD_PYTHONSDK'] = 'dummy-password'
-    print('PASSWORD_PYTHONSDK set in environment.')
+    load_dotenv(filepath)
+    print('Loaded vars from above .env file in current environment.')
 
 
 def run_test():
 
     if LOAD_ENV_VARS is True:
         load_env_vars()
-    test_grids_function()
+    test_get_property_info()
 
 
 if __name__ == '__main__':
-
     run_test()
