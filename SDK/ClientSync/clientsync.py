@@ -12,7 +12,7 @@ password = os.getenv(user_password)
 if not os.getenv(signing_status):
 	signing = "Disabled"
 else:
-	signing = "Enabled"
+	signing = os.getenv(signing_status)
 
 if signing == "Enabled":
 	body = {"uname": name,"passwd": password}
