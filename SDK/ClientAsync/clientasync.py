@@ -40,8 +40,11 @@ class ClientV1:
 		
 	def initializeForService(self,prefix,uri,apiversion,port=None,service='SCGrids'):
 
-		if signing == "Disabled":
+		if signing == "Disabled" and port!=None:
 			self.url = prefix + "://"+ uri + ":" + str(port) +"/" + apiversion + "/actions"
+			self.headers = {"content-type":"application/json"}
+		elif signing == "Disabled" and port==None:
+			self.url = prefix + "://"+ uri +"/" + apiversion + "/actions"
 			self.headers = {"content-type":"application/json"}
 		elif signing == "Enabled":
 			self.url = prefix + "://"+ uri + "/" + apiversion + "/actions"

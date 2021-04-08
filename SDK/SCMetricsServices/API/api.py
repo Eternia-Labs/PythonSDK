@@ -47,6 +47,12 @@ class SCMetrics:
             res = self.Async_client.makeRequest(httpmethod='POST',op='scmetrics.getModuleMetrics',org=org,pid=pid,body=json.loads(expJson))
         return res
 
+    def getModuleTSMetrics(self,org,pid,expJson,client=None):
+        if client == 'Sync':
+            res = self.Sync_client.makeRequest(httpmethod='POST',op='scmetrics.getModuleTSMetrics',org=org,pid=pid,body=json.loads(expJson))
+        else:
+            res = self.Async_client.makeRequest(httpmethod='POST',op='scmetrics.getModuleTSMetrics',org=org,pid=pid,body=json.loads(expJson))
+        return res
 
 
 
