@@ -3,6 +3,7 @@
 ## Important Step:
 
 For installing Pycurl mentioned in the requirements.txt
+(For macOS Big Sur)
 
 export CPPFLAGS=-I/usr/local/opt/openssl/include
 export LDFLAGS=-L/usr/local/opt/openssl/lib
