@@ -68,6 +68,37 @@ class SCGrids:
         else:
             res = self.Async_client.makeRequest(httpmethod='POST',op='scgrids.readBuilding',org=org, pid =pid)
         return res
+
+    # TODO: Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
+    def read_zone(self, org: str, pid: str, exp_json: str, client=None) -> any:
+        """
+        This gets the Zone given by it's ID for a Building
+
+        :param org: Organisation ID
+        :param pid: Project ID
+        :param exp_json: Expected request body (as a JSON string)
+        :param client: HTTP Client type to use ("Async" or "Sync")
+        :return: Response to HTTP Request
+        """
+
+        if client == 'Sync':
+            _client_obj = self.Sync_client
+        else:
+            _client_obj = self.Async_client
+
+        _method = 'POST'
+        _op = 'scgrids.readZone'
+
+        request_kwargs = {
+            'httpmethod': _method,
+            'op': _op,
+            'org': org,
+            'pid': pid,
+            'body': json.loads(exp_json)
+        }
+
+        res = _client_obj.makeRequest(**request_kwargs)
+        return res
         
     def listBuildingMetrics(self,org,pid,client=None):
         if client == 'Sync':
