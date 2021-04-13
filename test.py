@@ -1,5 +1,6 @@
 import os
 from pprint import pformat
+from tornado.httpclient import HTTPClientError
 
 from dotenv import load_dotenv
 
@@ -38,23 +39,33 @@ def test_get_property_info(org: str = None, pid: str = None, prop_id: str = None
     # region Parse response based on type of client
     if test_client == CLIENT_TYPE_ASYNC:
         response_content = read_prop_resp
-        print('Response is:')
-        print(pformat(response_content))
+        print('Obtained response')
     else:
         status_code = read_prop_resp.status_code
         print(f'Status code in this response is: {status_code}')
         response_content = read_prop_resp.json()
-        print('Obtained .json() from response. response.json() is:')
-        print(pformat(response_content))
+        print('Obtained .json() from response.')
     # endregion
+
+    print('Type of response content is:')
+    type_response = type(response_content)
+    print(type_response)
+
+    if type_response is HTTPClientError:
+        _status_text = 'Error in HTTP Request by sc-python-sdk'
+        _err_text = response_content.message
+        _status_code = response_content.code
+        return_text = f'{_status_text}: code: {_status_code}| message: {_err_text}'
+        print(return_text)
+        return
+
+    print('Response content is:')
+    print(pformat(response_content))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
         desired_data = response_content['data']
         print('Extracted "data" from response. Data is:')
         print(pformat(desired_data))
-    else:
-        print('Response content is:')
-        print(pformat(response_content))
 
 
 def load_env_vars(dotenv_filepath: str = None):
