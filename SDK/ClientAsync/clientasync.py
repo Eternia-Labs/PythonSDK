@@ -5,7 +5,7 @@ import json
 import requests
 import os
 
-AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
+# AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 
 signing_status = 'SIGNING_STATUS_PYTHONSDK'
 user_name = 'USER_NAME_PYTHONSDK'
