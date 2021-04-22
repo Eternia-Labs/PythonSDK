@@ -88,7 +88,7 @@ class ClientV1:
 				return e
 			return json.loads(response.body)
 		print("making request to ---", finalURI, "----")
-		io_loop = IOLoop.current()
+		io_loop = IOLoop.instance()
 		return io_loop.run_sync(toExecute)
 	
 	# def __del__(self):
