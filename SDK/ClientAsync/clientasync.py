@@ -1,6 +1,7 @@
 from tornado.httpclient import AsyncHTTPClient, HTTPRequest
 from tornado.ioloop import IOLoop
 from tornado.escape import json_encode
+import asyncio
 import json
 import requests
 import os
@@ -78,18 +79,18 @@ class ClientV1:
 			finalURI = self.geturl() + '?op='+ str(op) + '&org=' + str(org) + '&pid='+str(pid)
 		
 		req = HTTPRequest(finalURI,method = httpmethod, body = body,request_timeout = self.timeout,headers=self.headers)
-		# print(req.headers)
+		
 		async def toExecute():
 			try:
-				response = await self.session.fetch(req)
+				session = AsyncHTTPClient()
+				response = await session.fetch(req)
 				# print(json.loads(response.body))
 			except Exception as e:
 				print("inside exception",str(e))
 				return e
 			return json.loads(response.body)
 		print("making request to ---", finalURI, "----")
-		io_loop = IOLoop.instance()
-		return io_loop.run_sync(toExecute)
+		return asyncio.run(toExecute())
 	
 	# def __del__(self):
 	# 	print("Deleting client")
