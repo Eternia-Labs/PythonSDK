@@ -31,7 +31,7 @@ if signing == "Enabled":
 class ClientV1:
 
 	def __init__(self):
-		self.session = AsyncHTTPClient()
+		self.session = None
 		self.timeout = 10
 		self.url = None
 		self.service = None
@@ -82,8 +82,9 @@ class ClientV1:
 		
 		async def toExecute():
 			try:
-				session = AsyncHTTPClient()
-				response = await session.fetch(req)
+				if self.session is None:
+					self.session = AsyncHTTPClient()
+				response = await self.session.fetch(req)
 				# print(json.loads(response.body))
 			except Exception as e:
 				print("inside exception",str(e))
