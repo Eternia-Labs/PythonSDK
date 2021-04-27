@@ -83,7 +83,9 @@ class ClientV1:
 		async def toExecute():
 			try:
 				if self.session is None:
+					print('self.session is currently None')
 					self.session = AsyncHTTPClient()
+					print('self.session now set to AsyncHTTPClient()')
 				response = await self.session.fetch(req)
 				# print(json.loads(response.body))
 			except Exception as e:
