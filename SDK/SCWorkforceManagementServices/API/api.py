@@ -39,11 +39,25 @@ class SCWorkforcemanagement:
         except Exception as e:
             print("Exception "+ str(e))
 
-    def createIncidentWithoutAssignee(self,org,pid,expJson,client=None):
+    def createIncidentWithoutAssignee(self, org, propid, pid, expJson, client=None):
         if client == 'Sync':
-            res = self.Sync_client.makeRequest(httpmethod='POST', op='scteams.createIncidentWithoutAssignee', body=json.loads(expJson), org=org, pid=pid)
+            res = self.Sync_client.makeRequest(
+                httpmethod='POST',
+                op='scteams.createIncidentWithoutAssignee',
+                propid=propid,
+                body=json.loads(expJson),
+                org=org,
+                pid=pid
+            )
         else:
-            res = self.Async_client.makeRequest(httpmethod='POST', op='scteams.createIncidentWithoutAssignee', body=json.loads(expJson), org=org, pid=pid)
+            res = self.Async_client.makeRequest(
+                httpmethod='POST',
+                op='scteams.createIncidentWithoutAssignee',
+                propid=propid,
+                body=json.loads(expJson),
+                org=org,
+                pid=pid
+            )
         return res
     
     
