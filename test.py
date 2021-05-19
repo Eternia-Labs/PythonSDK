@@ -375,8 +375,10 @@ def test_find_availability_for_incident(org: str = None, pid: str = None, prop_i
     else:
         request_body = {}
 
-        response = scworkforcemanagement.find_availability_for_incident(org, prop_id, pid,
-                                                                                      json.dumps(request_body), test_client)
+        # response = scworkforcemanagement.find_availability_for_incident(org, prop_id, pid,json.dumps(request_body),
+        #                                                                 test_client)
+
+        response = {}
 
         print('Find availability request complete. Response is:')
         print(response)
@@ -467,7 +469,7 @@ def run_test():
     if LOAD_ENV_VARS is True:
         load_env_vars()
 
-    test_create_incident_without_assignee()
+    test_find_availability_for_incident()
 
 
 # region Find availability for incident Sample Response
