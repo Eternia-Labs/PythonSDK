@@ -61,11 +61,12 @@ class SCWorkforcemanagement:
         return res
 
     # TODO: Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
-    def find_availability_for_incident(self, org: str, pid: str, exp_json: str, client=None) -> any:
+    def find_availability_for_incident(self, org: str, prop_id: str, pid: str, exp_json: str, client = None) -> any:
         """
         This returns availability response for incident
 
         :param org: Organisation ID
+        :param prop_id: Property ID
         :param pid: Project ID
         :param exp_json: Expected request body (as a JSON string)
         :param client: HTTP Client type to use ("Async" or "Sync")
@@ -83,6 +84,7 @@ class SCWorkforcemanagement:
         request_kwargs = {
             'httpmethod': _method,
             'op': _op,
+            'propid': prop_id,
             'org': org,
             'pid': pid,
             'body': json.loads(exp_json)
