@@ -358,9 +358,8 @@ def test_find_availability_for_incident(org: str = None, pid: str = None, prop_i
     if pid is None:
         pid = os.environ['TEST_PID']
 
-    # TODO: Check: prop_id is not being used for this request?
-    # if prop_id is None:
-    #     prop_id = os.environ['TEST_PROP_ID']
+    if prop_id is None:
+        prop_id = os.environ['TEST_PROP_ID']
 
     if zone_id is None:
         zone_id = os.environ['TEST_ZONE_ID']
@@ -383,8 +382,7 @@ def test_find_availability_for_incident(org: str = None, pid: str = None, prop_i
             ]
         }
 
-        # prop_id is required?
-        response = scworkforcemanagement.find_availability_for_incident(org, pid, json.dumps(request_body), test_client)
+        response = scworkforcemanagement.find_availability_for_incident(org, prop_id, pid, json.dumps(request_body), test_client)
 
         print('Find availability request complete. Response is:')
         print(response)
