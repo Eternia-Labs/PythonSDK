@@ -3,6 +3,7 @@ import json
 import os
 from pprint import pformat
 from tornado.httpclient import HTTPClientError
+from tornado.simple_httpclient import HTTPTimeoutError
 
 from dotenv import load_dotenv
 
@@ -141,7 +142,7 @@ def test_get_property_info(org: str = None, pid: str = None, prop_id: str = None
     type_response = type(response_content)
     print(type_response)
 
-    if type_response is HTTPClientError:
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
         _status_text = 'Error in HTTP Request by sc-python-sdk'
         _err_text = response_content.message
         _status_code = response_content.code
@@ -196,7 +197,7 @@ def test_get_building_info(org: str = None, pid: str = None, test_client=CLIENT_
     type_response = type(response_content)
     print(type_response)
 
-    if type_response is HTTPClientError:
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
         _status_text = 'Error in HTTP Request by sc-python-sdk'
         _err_text = response_content.message
         _status_code = response_content.code
@@ -257,7 +258,7 @@ def test_get_zone_info(org: str = None, pid: str = None, zone_id: str = None, te
     type_response = type(response_content)
     print(type_response)
 
-    if type_response is HTTPClientError:
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
         _status_text = 'Error in HTTP Request by sc-python-sdk'
         _err_text = response_content.message
         _status_code = response_content.code
@@ -329,7 +330,7 @@ def test_create_incident_without_assignee(org: str = None, pid: str = None, prop
     type_response = type(response_content)
     print(type_response)
 
-    if type_response is HTTPClientError:
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
         _status_text = 'Error in HTTP Request by sc-python-sdk'
         _err_text = response_content.message
         _status_code = response_content.code
@@ -405,7 +406,7 @@ def test_find_availability_for_incident(org: str = None, pid: str = None, prop_i
     type_response = type(response_content)
     print(type_response)
 
-    if type_response is HTTPClientError:
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
         _status_text = 'Error in HTTP Request by sc-python-sdk'
         _err_text = response_content.message
         _status_code = response_content.code
