@@ -347,11 +347,9 @@ def test_create_incident_without_assignee(org: str = None, pid: str = None, prop
 
 
 def test_find_availability_for_incident(org: str = None, pid: str = None, prop_id: str = None, zone_id: str = None,
-                                        test_client=CLIENT_TYPE_ASYNC):
+                                        test_client=CLIENT_TYPE_ASYNC, return_mock: bool = True):
 
     print('Starting test to Find availability for Incident...')
-
-    service_function_not_available = True
 
     if org is None:
         org = os.environ['TEST_ORG']
@@ -359,8 +357,9 @@ def test_find_availability_for_incident(org: str = None, pid: str = None, prop_i
     if pid is None:
         pid = os.environ['TEST_PID']
 
-    if prop_id is None:
-        prop_id = os.environ['TEST_PROP_ID']
+    # TODO: Check: prop_id is not being used for this request?
+    # if prop_id is None:
+    #     prop_id = os.environ['TEST_PROP_ID']
 
     if zone_id is None:
         zone_id = os.environ['TEST_ZONE_ID']
@@ -370,15 +369,21 @@ def test_find_availability_for_incident(org: str = None, pid: str = None, prop_i
     scworkforcemanagement = SCWorkforcemanagement()
     print('SCWorkforcemanagement instantiated.')
 
-    if service_function_not_available is True:
+    if return_mock is True:
         response_content = WORKFORCE_FIND_AVAILABILITY_RESPONSE_2
     else:
-        request_body = {}
+        curr_unix_time = int(time.time())
+        end_unix_time = curr_unix_time + 900  # Adding 15 minutes to current for due time.
 
-        # response = scworkforcemanagement.find_availability_for_incident(org, prop_id, pid,json.dumps(request_body),
-        #                                                                 test_client)
+        request_body = {
+            "EndTime": end_unix_time,
+            "ZoneID": [
+                zone_id
+            ]
+        }
 
-        response = {}
+        # prop_id is required?
+        response = scworkforcemanagement.find_availability_for_incident(org, pid, json.dumps(request_body), test_client)
 
         print('Find availability request complete. Response is:')
         print(response)
@@ -468,8 +473,10 @@ def run_test():
 
     if LOAD_ENV_VARS is True:
         load_env_vars()
-
-    test_find_availability_for_incident()
+    # test_get_zone_info()
+    # test_get_building_info()
+    # test_create_incident_without_assignee()
+    test_find_availability_for_incident(return_mock=False)
 
 
 # region Find availability for incident Sample Response
