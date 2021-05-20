@@ -11,6 +11,18 @@ pip install pycurl --global-option="--with-openssl"
 
 If not installed in this way, it would throw error : ImportError: pycurl: libcurl link-time ssl backend (openssl) is different from compile-time ssl backend.
 
+
+## User Tips (Manually Add SDK to client repository):
+
+1. Open PythonSDK and copy the "SDK" directory inside it
+2. Paste above copied directory inside the client repository
+   Recommended: Python Client repository should have virtual environment.
+   Suppose name of virtual environment in the Python client repository is "venv", then: 
+    - Paste the above copied directory inside: venv/lib/Python3.x/site-packages
+3. Open requirements.txt and install all the listed dependencies in virtual environment of the Python client repository
+
+
+
 ## Setup steps
 
 1. Clone repo
@@ -101,6 +113,3 @@ Signing is not enabled. It is "Disabled" by default. You can enable it by settin
 'SIGNING_STATUS_PYTHONSDK' ("Enabled")
 'USER_NAME_PYTHONSDK' (<user_name>)
 'PASSWORD_PYTHONSDK' (<password>)
-
-
-
