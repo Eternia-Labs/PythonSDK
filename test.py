@@ -421,6 +421,77 @@ def test_find_availability_for_incident(org: str = None, pid: str = None, prop_i
         print(pformat(desired_data))
 
 
+def test_assign_incident(test_client=CLIENT_TYPE_ASYNC, return_mock: bool = True):
+
+    print('Starting test to Assign Incident...')
+
+    if return_mock is True:
+        response_content = WORKFORCE_ASSIGN_INCIDENT_RESPONSE
+    else:
+        org = os.environ['TEST_ORG']
+        pid = os.environ['TEST_PID']
+        prop_id = os.environ['TEST_PROP_ID']
+
+        zone_id = os.environ['TEST_ZONE_ID']
+
+        from SDK.SCWorkforceManagementServices.API import SCWorkforcemanagement
+        print('SCWorkforcemanagement imported from respective service directory.')
+        scworkforcemanagement = SCWorkforcemanagement()
+        print('SCWorkforcemanagement instantiated.')
+
+        seat_id = os.environ['TEST_SEAT_ID']
+        shift_id = os.environ['TEST_SHIFT_ID']
+        incident_id = os.environ['TEST_INCIDENT_ID']
+
+        zone_id_for_assign_incident = '8a6ef71079e54af2884563e93c4ad800'
+
+        request_body = {
+            "SeatId": seat_id,
+            "ShiftID": shift_id,
+            "zoneId": zone_id_for_assign_incident,
+            "IncidentID": incident_id
+        }
+
+        response = scworkforcemanagement.assign_shift_to_incident(org, prop_id, pid, json.dumps(request_body),
+                                                                  test_client)
+
+        print('Find availability request complete. Response is:')
+        print(response)
+
+        print(f'{test_client} client was used for this request. Response will be parsed accordingly.')
+
+        # region Parse response based on type of client
+        if test_client == CLIENT_TYPE_ASYNC:
+            response_content = response
+            print('Obtained response')
+        else:
+            status_code = response.status_code
+            print(f'Status code in this response is: {status_code}')
+            response_content = response.json()
+            print('Obtained .json() from response.')
+        # endregion
+
+    print('Type of response content is:')
+    type_response = type(response_content)
+    print(type_response)
+
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
+        _status_text = 'Error in HTTP Request by sc-python-sdk'
+        _err_text = response_content.message
+        _status_code = response_content.code
+        return_text = f'{_status_text}: code: {_status_code}| message: {_err_text}'
+        print(return_text)
+        return
+
+    print('Response content is:')
+    print(pformat(response_content))
+
+    if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
+        desired_data = response_content['data']
+        print('Extracted "data" from response. Data is:')
+        print(pformat(desired_data))
+
+
 def _create_data_for_incident(zone_details: dict):
 
     test_task_details = {'Name': 'Test Task in Incident', 'Comments': 'No Comments'}
@@ -475,7 +546,8 @@ def run_test():
     # test_get_zone_info()
     # test_get_building_info()
     # test_create_incident_without_assignee()
-    test_find_availability_for_incident(return_mock=False)
+    # test_find_availability_for_incident(return_mock=False)
+    test_assign_incident(return_mock=False)
 
 
 # region Find availability for incident Sample Response
@@ -515,6 +587,15 @@ WORKFORCE_FIND_AVAILABILITY_RESPONSE_2 = {
             }
         ]
     },
+    "code": "SUCCESS"
+}
+# endregion
+
+# region Assign Incident sample success response (forged manually)
+# Created on 01 June 2021, 2:03 SGT
+WORKFORCE_ASSIGN_INCIDENT_RESPONSE = {
+    "message": "Whatever...",
+    "data": {},
     "code": "SUCCESS"
 }
 # endregion
