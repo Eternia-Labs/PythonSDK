@@ -9,6 +9,7 @@ PROTOCOL = 'SC_WORKFORCEMANAGEMENT_HTTP_PROTOCOL'
 PORT = 'SC_WORKFORCEMANAGEMENT_PORT'
 apiversion = 'v1'
 
+
 class SCWorkforcemanagement:
     def __init__(self): 
         self.Async_client = clientasync.getClient()
@@ -93,3 +94,35 @@ class SCWorkforcemanagement:
         res = _client_obj.makeRequest(**request_kwargs)
         return res
 
+    # TODO: Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
+    def assign_shift_to_incident(self, org: str, prop_id: str, pid: str, exp_json: str, client = None) -> any:
+        """
+        This returns availability response for incident
+
+        :param org: Organisation ID
+        :param prop_id: Property ID
+        :param pid: Project ID
+        :param exp_json: Expected request body (as a JSON string)
+        :param client: HTTP Client type to use ("Async" or "Sync")
+        :return: Response to HTTP Request
+        """
+
+        if client == 'Sync':
+            _client_obj = self.Sync_client
+        else:
+            _client_obj = self.Async_client
+
+        _method = 'POST'
+        _op = 'scteams.assignIncident'
+
+        request_kwargs = {
+            'httpmethod': _method,
+            'op': _op,
+            'propid': prop_id,
+            'org': org,
+            'pid': pid,
+            'body': json.loads(exp_json)
+        }
+
+        res = _client_obj.makeRequest(**request_kwargs)
+        return res
