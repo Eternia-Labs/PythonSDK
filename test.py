@@ -594,8 +594,7 @@ WORKFORCE_FIND_AVAILABILITY_RESPONSE_2 = {
 # region Assign Incident sample success response (forged manually)
 # Created on 01 June 2021, 2:03 SGT
 WORKFORCE_ASSIGN_INCIDENT_RESPONSE = {
-    "message": "Whatever...",
-    "data": {},
+    "message": "Incident has been successfully assigned to <seat_id>",
     "code": "SUCCESS"
 }
 # endregion
