@@ -6,7 +6,11 @@ import json
 import requests
 import os
 
-# TODO: Check Self.session is not required as tornado client is already singleton
+# TODO: Check self.session is not required as tornado client is already singleton
+#  No need to check session to ensure it is singleton. Tornado client when used by the library used
+#  is ensured to be a singleton - Refer to tornado docs at:
+#  tornadoweb.org/en/stable/httpclient.html
+#  Class tornado.httpclient.AsyncHTTPClient
 
 # AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 
@@ -83,16 +87,8 @@ class ClientV1:
 		req = HTTPRequest(finalURI,method = httpmethod, body = body,request_timeout = self.timeout,headers=self.headers)
 		
 		async def toExecute():
-			try:
-				if self.session is None:
-					print('self.session is currently None')
-					self.session = AsyncHTTPClient()
-					print('self.session now set to AsyncHTTPClient()')
-				response = await self.session.fetch(req)
-				# print(json.loads(response.body))
-			except Exception as e:
-				print("inside exception",str(e))
-				return e
+			response = await self.session.fetch(req)
+			# print(json.loads(response.body))
 			return json.loads(response.body)
 		print("making request to ---", finalURI, "----")
 		return asyncio.run(toExecute())

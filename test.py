@@ -7,6 +7,12 @@ from tornado.simple_httpclient import HTTPTimeoutError
 
 from dotenv import load_dotenv
 
+# TODO: In ClientAsync -> See the todo added in the module
+#  No need to check session to ensure it is singleton. Tornado client when used by the library used
+#  is ensured to be a singleton - Refer to tornado docs at:
+#  tornadoweb.org/en/stable/httpclient.html
+#  Class tornado.httpclient.AsyncHTTPClient
+
 LOAD_ENV_VARS = True
 EXTRACT_DATA_FROM_SDK_RESPONSE = True
 
