@@ -6,6 +6,8 @@ import json
 import requests
 import os
 
+# TODO: Check Self.session is not required as tornado client is already singleton
+
 # AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 
 signing_status = 'SIGNING_STATUS_PYTHONSDK'
