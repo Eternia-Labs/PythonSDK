@@ -83,3 +83,152 @@ class SCBi:
                 pid=pid,
             )
         return res
+
+    def getReportingServicesForPrincipalProperty(
+        self, org, pid, propid, expJson, client=None
+    ):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.getReportingServicesForPrincipalProperty",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.getReportingServicesForPrincipalProperty",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
+    def pdfReportGenerationFailure(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.pdfReportGenerationFailure",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.pdfReportGenerationFailure",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
+    def pdfReportGenerationSuccess(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.pdfReportGenerationSuccess",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.pdfReportGenerationSuccess",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
+    def pdfGenerationTaskStarted(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.pdfGenerationTaskStarted",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.pdfGenerationTaskStarted",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
+    def kpiJobFailure(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobFailure",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobFailure",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
+    def kpiJobSuccess(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobSuccess",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobSuccess",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
+    def kpiJobStarted(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobStarted",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobStarted",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res

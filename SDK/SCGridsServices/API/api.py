@@ -181,3 +181,22 @@ class SCGrids:
                 httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid
             )
         return res
+
+    def buildingZoneMap(self, org, pid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scgrids.buildingZoneMap",
+                org=org,
+                pid=pid,
+                body=json.loads(expJson),
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scgrids.buildingZoneMap",
+                org=org,
+                pid=pid,
+                body=json.loads(expJson),
+            )
+        return res
