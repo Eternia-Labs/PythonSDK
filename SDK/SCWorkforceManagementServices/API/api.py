@@ -69,6 +69,48 @@ class SCWorkforcemanagement:
             )
         return res
 
+    def getTaskGroupInTRangeForID(self, org, pid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scteams.getTaskGroupInTRangeForID",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scteams.getTaskGroupInTRangeForID",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+            )
+        return res
+
+    def getShiftLatenessMetricsForBuilding(
+        self, org, pid, propid, expJson, client=None
+    ):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scteams.getShiftLatenessMetricsForBuilding",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scteams.getShiftLatenessMetricsForBuilding",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
     # TODO: Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
     def find_availability_for_incident(
         self, org: str, prop_id: str, pid: str, exp_json: str, client=None

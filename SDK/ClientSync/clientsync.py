@@ -136,11 +136,12 @@ class ClientV1:
     def makeRequest(
         self, httpmethod, op, propid=None, body=None, org="SMARTCLEAN", pid="scnoop"
     ):
-        if self.flag == 0:
-            self.access_token = access_token
-            self.flag = 1
-
         if signing == "Enabled":
+
+            if self.flag == 0:
+                self.access_token = access_token
+                self.flag = 1
+
             self.headers = {
                 "content-type": "application/json",
                 "x-sc-identity": "external",
