@@ -32,10 +32,10 @@ class SCWorkforcemanagement:
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, port, apiversion, service="SCWorkforceManagement"
+                    prefix, uri, apiversion, port, service="SCWorkforceManagement"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, port, apiversion, service="SCWorkforceManagement"
+                    prefix, uri, apiversion, port, service="SCWorkforceManagement"
                 )
             else:
                 print("SCWORKFORCEMANAGEMENT: Port is not set")
