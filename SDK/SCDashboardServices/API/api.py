@@ -32,10 +32,10 @@ class SCDashboard:
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, port, apiversion, service="SCDashboard"
+                    prefix, uri, apiversion, port, service="SCDashboard"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, port, apiversion, service="SCDashboard"
+                    prefix, uri, apiversion, port, service="SCDashboard"
                 )
             else:
                 print("SCDASHBOARD: Port is not set")
