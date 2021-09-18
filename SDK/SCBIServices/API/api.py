@@ -32,10 +32,10 @@ class SCBi:
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, port, apiversion, service="SCBi"
+                    prefix, uri, apiversion, port, service="SCBi"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, port, apiversion, service="SCBi"
+                    prefix, uri, apiversion, port, service="SCBi"
                 )
             else:
                 print("SCBI: Port is not set")
