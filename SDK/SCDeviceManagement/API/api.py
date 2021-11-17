@@ -4,13 +4,13 @@ import json
 import tornado.ioloop
 import os
 
-HOST = "SC_METRICS_HOST"
-PROTOCOL = "SC_METRICS_HTTP_PROTOCOL"
-PORT = "SC_METRICS_PORT"
-apiversion = "v4"
+HOST = "SC_DEVICE_MANAGEMENT_HOST"
+PROTOCOL = "SC_DEVICE_MANAGEMENT_HTTP_PROTOCOL"
+PORT = "SC_DEVICE_MANAGEMENT_PORT"
+apiversion = "v1"
 
 
-class SCMetrics:
+class SCDeviceManagement:
     def __init__(self):
         self.Async_client = clientasync.getClient()
         self.Sync_client = clientsync.getClient()
@@ -21,58 +21,56 @@ class SCMetrics:
             if os.getenv(HOST):
                 uri = os.getenv(HOST)
             else:
-                uri = "console.smartclean.io/api/scmetrics"
-                print("SCMETRICS: Host is not set")
+                uri = "console.smartclean.io/api/scdevicemanagement"
+                print("SCDEVICEMANAGEMENT: Host is not set")
             if os.getenv(PROTOCOL):
                 prefix = os.getenv(PROTOCOL)
             else:
                 prefix = "https"
-                print("SCMETRICS: protocol env variable is not set")
+                print("SCDEVICEMANAGEMENT: protocol env variable is not set")
             if os.getenv(PORT):
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion=apiversion, port=port, service="SCMetrics"
+                    prefix, uri, apiversion=apiversion, port=port, service="SCDeviceManagement"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion=apiversion, port=port, service="SCMetrics"
+                    prefix, uri, apiversion=apiversion, port=port, service="SCDeviceManagement"
                 )
             else:
-                print("SCMETRICS: Port is not set")
+                print("SCDEVICEMANAGEMENT: Port is not set")
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, service="SCMetrics"
+                    prefix, uri, apiversion, service="SCDeviceManagement"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, service="SCMetrics"
+                    prefix, uri, apiversion, service="SCDeviceManagement"
                 )
 
         except Exception as e:
             print("Exception " + str(e))
 
-    def getModuleMetrics(self, org, pid, expJson, client=None):
+    def realSenseMigrated(self, org, pid, client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
-                op="scmetrics.getModuleMetrics",
+                op="scdevicemanagement.realSenseMigrated",
                 org=org,
-                pid=pid,
-                body=json.loads(expJson),
+                pid=pid
             )
         else:
             res = self.Async_client.makeRequest(
                 httpmethod="POST",
-                op="scmetrics.getModuleMetrics",
+                op="scdevicemanagement.realSenseMigrated",
                 org=org,
-                pid=pid,
-                body=json.loads(expJson),
+                pid=pid
             )
         return res
 
-    def getModuleTSMetrics(self, org, pid, expJson, client=None):
+    def getDeviceSlots(self, org, pid, expJson, client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
-                op="scmetrics.getModuleTSMetrics",
+                op="scdevicemanagement.getDeviceSlots",
                 org=org,
                 pid=pid,
                 body=json.loads(expJson),
@@ -80,7 +78,7 @@ class SCMetrics:
         else:
             res = self.Async_client.makeRequest(
                 httpmethod="POST",
-                op="scmetrics.getModuleTSMetrics",
+                op="scdevicemanagement.getDeviceSlots",
                 org=org,
                 pid=pid,
                 body=json.loads(expJson),
