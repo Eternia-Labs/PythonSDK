@@ -7,7 +7,7 @@ import os
 HOST = "SC_DEVICE_MANAGEMENT_HOST"
 PROTOCOL = "SC_DEVICE_MANAGEMENT_HTTP_PROTOCOL"
 PORT = "SC_DEVICE_MANAGEMENT_PORT"
-apiversion = "v4"
+apiversion = "v1"
 
 
 class SCDeviceManagement:
