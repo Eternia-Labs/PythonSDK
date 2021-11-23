@@ -682,6 +682,12 @@ MOCK_RESPONSE_DEVICE_MGMT_GET_DEVICE_SLOTS = {
 # endregion
 
 
+MOCK_RESPONSE_SEND_SMS = {
+    "code": "SUCCESS",
+    "message": "Successfully sent SMS to phone numbers"
+}
+
+
 # region Test desired Op in desired Service
 def test_device_management_api(op: str, org: str = None, pid: str = None, return_mock: bool = True):
 
@@ -933,6 +939,66 @@ def test_workforce_apis(op: str, org: str = None, pid: str = None, return_mock: 
         desired_data = response_content["data"]
         print('Extracted "data" from response. Data is:')
         print(pformat(desired_data))
+
+
+def test_sms_api(op: str, org: str = None, pid: str = None, return_mock: bool = True):
+
+    if org is None:
+        org = os.environ["TEST_ORG"]
+
+    if pid is None:
+        pid = os.environ["TEST_PID"]
+
+    if return_mock is True:
+        response_content = MOCK_RESPONSE_SEND_SMS
+    else:
+
+        instance = None
+
+        test_client = TEST_CLIENT
+
+        if op == 'SMS OP':
+            request_data = {}
+            request_body_json = json.dumps(request_data)
+            print(f'{op} request complete. Response is:')
+            response = ...
+            print(response)
+
+        print(
+            f"{test_client} client was used for this request. Response will be parsed accordingly."
+        )
+
+        # region Parse response based on type of client
+        if test_client == CLIENT_TYPE_ASYNC:
+            response_content = response
+            print("Obtained response")
+        else:
+            status_code = response.status_code
+            print(f"Status code in this response is: {status_code}")
+            response_content = response.json()
+            print("Obtained .json() from response.")
+        # endregion
+
+    print("Type of response content is:")
+    type_response = type(response_content)
+    print(type_response)
+
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
+        _status_text = "Error in HTTP Request by sc-python-sdk"
+        _err_text = response_content.message
+        _status_code = response_content.code
+        return_text = f"{_status_text}: code: {_status_code}| message: {_err_text}"
+        print(return_text)
+        return
+    # Example of error response:
+    # Error in HTTP Request by sc-python-sdk: code: 400| message: Bad Request
+    print("Response content is:")
+    print(pformat(response_content))
+
+    # if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
+    #     desired_data = response_content["data"]
+    #     print('Extracted "data" from response. Data is:')
+    #     print(pformat(desired_data))
 # endregion
 
 
