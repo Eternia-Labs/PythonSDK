@@ -1,0 +1,82 @@
+_SDK_ASYNC_CLIENT_ATTR_STATUS_CODE = 'status'
+_SDK_ASYNC_CLIENT_ATTR_MESSAGE = 'message'
+_SDK_ASYNC_CLIENT_ATTR_DATA = 'data'
+
+_SDK_ASYNC_CLIENT_MESSAGE_VALUE_SUCCESS = 'Success'
+
+_SDK_ASYNC_CLIENT_RESPONSE_TEMPLATE = {
+    _SDK_ASYNC_CLIENT_ATTR_STATUS_CODE: 200,
+    _SDK_ASYNC_CLIENT_ATTR_MESSAGE: "Success",
+    _SDK_ASYNC_CLIENT_ATTR_DATA: {}
+}
+
+_TEST_ZONE_CATEGORY_MEETING_ROOMS = 'MEETING_ROOMS'
+
+_TEST_OPERATING_HOURS_SET_1 = {
+    "0": [
+        {"End": "0000", "Start": "0000"}
+    ],
+    "1": [
+        {"End": "1700", "Start": "0900"}
+    ],
+    "2": [
+        {"End": "2000", "Start": "0900"}
+    ],
+    "3": [
+        {"End": "1700", "Start": "0800"}
+    ],
+    "4": [
+        {"End": "1700", "Start": "0900"}
+    ],
+    "5": [
+        {"End": "1700", "Start": "1700"}
+    ],
+    "6": [
+        {"End": "1800", "Start": "0700"}
+    ]
+}
+
+_DATA_TEMPLATE_READ_ZONE = {
+    "OrgId": str(),
+    "PropId": str(),
+    "PID": str(),
+    "LID": str(),
+    "InsID": str(),
+    "BeaconID": "N.A.",
+    "ZoneCategoryID": str(),
+    "Name": str(),
+    "Area": 200,
+    "FloorType": str(),
+    "Status": 'Active',
+    "OperatingHours": dict(),
+    "IsBuildingOperatingHours": False,
+}
+
+
+class MatrixGrids:
+
+    def create_async_response_read_zone():
+        _sdk_async_client_response_template = _SDK_ASYNC_CLIENT_RESPONSE_TEMPLATE.copy()
+
+        _data_template_read_zone = _DATA_TEMPLATE_READ_ZONE.copy()
+
+        desired_sdk_response = _sdk_async_client_response_template
+
+        desired_sdk_response[_SDK_ASYNC_CLIENT_ATTR_STATUS_CODE] = 200
+        desired_sdk_response[_SDK_ASYNC_CLIENT_ATTR_MESSAGE] = _SDK_ASYNC_CLIENT_MESSAGE_VALUE_SUCCESS
+        desired_sdk_response[_SDK_ASYNC_CLIENT_ATTR_DATA] = _data_template_read_zone
+
+        return desired_sdk_response
+
+    def create_async_response_read_building():
+        ...
+
+
+class MatrixDeviceManagement:
+
+    def create_async_response_get_realsense_migrated(self):
+        ...
+
+
+    def create_async_response_get_device_slots(self):
+        ...
