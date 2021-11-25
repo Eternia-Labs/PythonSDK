@@ -5,6 +5,8 @@ from pprint import pformat
 from tornado.httpclient import HTTPClientError
 from tornado.simple_httpclient import HTTPTimeoutError
 
+import test.data
+
 LOAD_ENV_VARS = True
 EXTRACT_DATA_FROM_SDK_RESPONSE = True
 
@@ -66,8 +68,8 @@ def test_get_property_info(
         print(return_text)
         return
 
-    print("Response content is:")
-    print(pformat(response_content))
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
         desired_data = response_content["data"]
@@ -125,8 +127,8 @@ def test_get_building_info(
         print(return_text)
         return
 
-    print("Response content is:")
-    print(pformat(response_content))
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
         desired_data = response_content["data"]
@@ -189,8 +191,8 @@ def test_get_zone_info(
         print(return_text)
         return
 
-    print("Response content is:")
-    print(pformat(response_content))
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
         desired_data = response_content["data"]
@@ -268,8 +270,8 @@ def test_create_incident_without_assignee(
         print(return_text)
         return
 
-    print("Response content is:")
-    print(pformat(response_content))
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
         desired_data = response_content["data"]
@@ -350,8 +352,8 @@ def test_find_availability_for_incident(
         print(return_text)
         return
 
-    print("Response content is:")
-    print(pformat(response_content))
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
         desired_data = response_content["data"]
@@ -421,8 +423,8 @@ def test_assign_incident(test_client=CLIENT_TYPE_ASYNC, return_mock: bool = True
         print(return_text)
         return
 
-    print('Response content is:')
-    print(pformat(response_content))
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
         desired_data = response_content['data']
@@ -678,7 +680,8 @@ MOCK_RESPONSE_DEVICE_MGMT_GET_DEVICE_SLOTS = {
          'ZoneId': 'ZoneID'}
     ],
     'code': 'SUCCESS',
-    'message': 'Successfully fetched given slots'}
+    'message': 'Successfully fetched given slots'
+}
 # endregion
 
 
@@ -689,7 +692,7 @@ MOCK_RESPONSE_SEND_SMS = {
 
 
 # region Test desired Op in desired Service
-def test_device_management_api(op: str, org: str = None, pid: str = None, return_mock: bool = True):
+def test_device_management_api(op: str, org: str = None, pid: str = None, client: str = None, return_mock: bool = True):
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -697,11 +700,21 @@ def test_device_management_api(op: str, org: str = None, pid: str = None, return
     if pid is None:
         pid = os.environ["TEST_PID"]
 
+    if client is None:
+        client = CLIENT_TYPE_ASYNC
+
+    # Supply args to mocker to update the mock data
+
     if return_mock is True:
-        if op == 'realSenseMigrated':
-            response_content = MOCK_RESPONSE_DEVICE_MGMT_REAL_SENSE_MIGRATED
-        else:
-            response_content = MOCK_RESPONSE_DEVICE_MGMT_GET_DEVICE_SLOTS
+        response_mocker = test.data.MatrixDeviceManagement(client)
+        _create_mock_resp = response_mocker.create_response_for_op(op)
+        mock_response = _create_mock_resp['response']
+        mock_response_status = _create_mock_resp['text']
+
+        if mock_response is None:
+            raise Exception(f'Failed to create mock response ({mock_response_status})')
+        response_content = mock_response
+
     else:
 
         from SDK.SCDeviceManagement.API import SCDeviceManagement
@@ -758,11 +771,16 @@ def test_device_management_api(op: str, org: str = None, pid: str = None, return
         return
     # Example of error response:
     # Error in HTTP Request by sc-python-sdk: code: 400| message: Bad Request
-    print("Response content is:")
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
+
     print(pformat(response_content))
 
 
-def test_grids_api(op: str, org: str = None, pid: str = None, return_mock: bool = True):
+def test_grids_api(op: str, org: str = None, pid: str = None, client: str = None, return_mock: bool = True):
+
+    if client is None:
+        client = CLIENT_TYPE_ASYNC
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -770,11 +788,18 @@ def test_grids_api(op: str, org: str = None, pid: str = None, return_mock: bool 
     if pid is None:
         pid = os.environ["TEST_PID"]
 
+    # SUpply args to mocker to update the mock data
+
     if return_mock is True:
-        if op == GRIDS_OP_GET_BUILDING_INFO:
-            response_content = TEST_READ_BUILDING_RESPONSE
-        else:
-            response_content = TEST_READ_ZONE_RESPONSE
+        response_mocker = test.data.MatrixGrids(client)
+        _create_mock_resp = response_mocker.create_response_for_op(op)
+        mock_response = _create_mock_resp['response']
+        mock_response_status = _create_mock_resp['text']
+
+        if mock_response is None:
+            raise Exception(f'Failed to create mock response ({mock_response_status})')
+        response_content = mock_response
+
     else:
 
         from SDK.SCGridsServices.API import SCGrids
@@ -825,8 +850,8 @@ def test_grids_api(op: str, org: str = None, pid: str = None, return_mock: bool 
         return
     # Example of error response:
     # Error in HTTP Request by sc-python-sdk: code: 400| message: Bad Request
-    print("Response content is:")
-    print(pformat(response_content))
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
         desired_data = response_content["data"]
@@ -932,8 +957,8 @@ def test_workforce_apis(op: str, org: str = None, pid: str = None, return_mock: 
         return
     # Example of error response:
     # Error in HTTP Request by sc-python-sdk: code: 400| message: Bad Request
-    print("Response content is:")
-    print(pformat(response_content))
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
         desired_data = response_content["data"]
@@ -941,6 +966,7 @@ def test_workforce_apis(op: str, org: str = None, pid: str = None, return_mock: 
         print(pformat(desired_data))
 
 
+# THIS IS WIP
 def test_sms_api(op: str, org: str = None, pid: str = None, return_mock: bool = True):
 
     if org is None:
@@ -957,11 +983,20 @@ def test_sms_api(op: str, org: str = None, pid: str = None, return_mock: bool = 
 
         test_client = TEST_CLIENT
 
-        if op == 'SMS OP':
-            request_data = {}
+        test_phone_numbers = 'num1, num2'
+        test_message = 'Hello how are you?'
+
+        if op == SEND_SMS_OP:
+
+            request_data = {
+                "numbers": test_phone_numbers,
+                "message": test_message
+            }
+
             request_body_json = json.dumps(request_data)
             print(f'{op} request complete. Response is:')
-            response = ...
+
+            response = MOCK_RESPONSE_SEND_SMS
             print(response)
 
         print(
@@ -992,8 +1027,8 @@ def test_sms_api(op: str, org: str = None, pid: str = None, return_mock: bool = 
         return
     # Example of error response:
     # Error in HTTP Request by sc-python-sdk: code: 400| message: Bad Request
-    print("Response content is:")
-    print(pformat(response_content))
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
 
     # if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
     #     desired_data = response_content["data"]
@@ -1016,12 +1051,54 @@ SERVICE_ID_WORKFORCE_MANAGEMENT = 'SCWorkforcemanagement'
 WORKFORCE_MGMT_OP_ASSIGN_INCIDENT = 'assignIncident'
 WORKFORCE_MGMT_OP_FIND_AVAILABILITY = 'findAvailability'
 WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = 'createIncidentWithoutAssignee'
+
+SEND_SMS_OP = 'sendSMS'
 # endregion
+
+
+def parse_sdk_response(client_type: str, sdk_response: any):
+
+    data_return = {
+        'data': None,
+        'text': 'default'
+    }
+
+    print(f'Parsing given SDK Response: {sdk_response} based on client type: {client_type}')
+
+    # region Parse response based on type of client
+    if client_type == CLIENT_TYPE_ASYNC:
+        _status_text = 'Obtained desired data from SDK response'
+        print(f'For {client_type} clients, desired data is what is returned by SDK')
+        data_return['text'] = _status_text
+        data_return['data'] = _status_text
+        return data_return
+
+    print(f'For {client_type} clients, desired data needs to be extracted via HTTP response attributes.')
+    status_code = sdk_response.status_code
+    _status_code_status_text = f"response.status_code is: {status_code}"
+    print(_status_code_status_text)
+
+    status_codes_for_success = {200, 201}
+
+    if status_code not in status_codes_for_success:
+        data_return['text'] = f'Cannot get desired data ({_status_code_status_text})'
+        return data_return
+
+    try:
+        response_content = sdk_response.json()
+    except Exception as err:
+        _err_type = type(err).__name__
+        _err_text = str(err)
+        err_info = f'{_err_type} trying to deserialize response using JSON ({_err_text})'
+        data_return['text'] = err_info
+        return data_return
+    print("Obtained .json() from response.")
+    # endregion
 
 
 if __name__ == "__main__":
     run_test(
         service=SERVICE_ID_DEVICE_MANAGEMENT,
         op=DEVICE_MANAGEMENT_OP_REALSENSE_MIGRATED,
-        return_mock=False
+        return_mock=True
     )

@@ -1,6 +1,14 @@
 from test import grids
 from test import device_management
 
+SDK_CLIENT_TYPE_ASYNC = 'Async'
+SDK_CLIENT_TYPE_SYNC = 'Sync'
+
+VALID_CLIENT_TYPES = {
+    SDK_CLIENT_TYPE_SYNC,
+    SDK_CLIENT_TYPE_ASYNC
+}
+
 # region Service Names and respective Ops
 
 # region Definitions for Service: grids
@@ -26,11 +34,3 @@ WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = 'createIncidentWithoutAssignee'
 # Definitions for Messaging service? (awaiting details)
 SEND_SMS_OP = 'sendSMS'
 # endregion
-
-SDK_CLIENT_TYPE_ASYNC = 'Async'
-SDK_CLIENT_TYPE_SYNC = 'Sync'
-
-VALID_CLIENT_TYPES = {
-    SDK_CLIENT_TYPE_SYNC,
-    SDK_CLIENT_TYPE_ASYNC
-}

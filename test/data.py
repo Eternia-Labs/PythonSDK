@@ -1,13 +1,10 @@
 import json
 
 import test
-from test import settings
 
-
-GRIDS_OP_GET_ZONE_INFO = test.GRIDS_OP_GET_ZONE_INFO
-GRIDS_OP_GET_BUILDING_INFO = test.GRIDS_OP_GET_BUILDING_INFO
-
-
+# TODO: Below attributes should go in definitions of project root
+#  and fetched from there, to keep compatibility between them
+#  But where in program these attributes are used is not known
 _SDK_ASYNC_CLIENT_ATTR_STATUS_CODE = 'status'
 _SDK_ASYNC_CLIENT_ATTR_MESSAGE = 'message'
 _SDK_ASYNC_CLIENT_ATTR_DATA = 'data'
@@ -19,50 +16,6 @@ _SDK_ASYNC_CLIENT_RESPONSE_TEMPLATE = {
     _SDK_ASYNC_CLIENT_ATTR_MESSAGE: "Success",
     _SDK_ASYNC_CLIENT_ATTR_DATA: {}
 }
-
-_TEST_ZONE_CATEGORY_MEETING_ROOMS = 'MEETING_ROOMS'
-
-_TEST_OPERATING_HOURS_SET_1 = {
-    "0": [
-        {"End": "0000", "Start": "0000"}
-    ],
-    "1": [
-        {"End": "1700", "Start": "0900"}
-    ],
-    "2": [
-        {"End": "2000", "Start": "0900"}
-    ],
-    "3": [
-        {"End": "1700", "Start": "0800"}
-    ],
-    "4": [
-        {"End": "1700", "Start": "0900"}
-    ],
-    "5": [
-        {"End": "1700", "Start": "1700"}
-    ],
-    "6": [
-        {"End": "1800", "Start": "0700"}
-    ]
-}
-
-_DATA_TEMPLATE_READ_ZONE = {
-    "OrgId": str(),
-    "PropId": str(),
-    "PID": str(),
-    "LID": str(),
-    "InsID": str(),
-    "BeaconID": "N.A.",
-    "ZoneCategoryID": str(),
-    "Name": str(),
-    "Area": 200,
-    "FloorType": str(),
-    "Status": 'Active',
-    "OperatingHours": dict(),
-    "IsBuildingOperatingHours": False,
-}
-
-_DATA_TEMPLATE_READ_BUILDING = {}
 
 
 class MockHTTPResponse:
@@ -76,19 +29,41 @@ class MockHTTPResponse:
         return self.json_data
 
 
-class MatrixGrids:
+# TODO: Take care of todo differences below.
+
+
+class SCService:
 
     def __init__(self, client: str):
 
-        self.sdk_client = client
-        self._data_template_read_zone = _DATA_TEMPLATE_READ_ZONE
-        self._data_template_read_building = _DATA_TEMPLATE_READ_BUILDING
+        self._sdk_client = client
+        self._desired_status_code = 200
+
+        self.ops = set()
+
+    def create_response_for_op(self, op: str) -> dict:
+        pass
+
+# TODO: Grids returns response in certain format
+
+class MatrixGrids(SCService):
+    Op1 = test.grids.OP_READ_ZONE
+    Op2 = test.grids.OP_READ_BUILDING
+
+    _DataTemplatesByOp = test.grids.DATA_TEMPLATE_BY_OP
+
+    def __init__(self, client: str):
+
+        super().__init__(client)
+
         self.ops = {
-            GRIDS_OP_GET_ZONE_INFO,
-            GRIDS_OP_GET_BUILDING_INFO
+            self.__class__.Op1,
+            self.__class__.Op2
         }
 
     def create_response_for_op(self, op: str) -> dict:
+
+        print(f'Creating Mock response for op: {op} in {self.__class__.__name__}')
 
         data_return = {
             'response': None,
@@ -96,37 +71,86 @@ class MatrixGrids:
         }
 
         if op not in self.ops:
+            print(f'Ops in this class are: {self.ops}')
             data_return['text'] = f'Given op: {op} does not have a test response available.'
             return data_return
 
         # region Get Data Template for Op
-        if op == GRIDS_OP_GET_ZONE_INFO:
-            _data_template = _DATA_TEMPLATE_READ_ZONE
-        else:
-            _data_template = _DATA_TEMPLATE_READ_BUILDING
+        if op not in self.__class__._DataTemplatesByOp:
+            _status_text = f'No Data Template defined for Op: {op} in {self.__class__.__name__}'
+            print(_status_text)
+            data_return['text'] = _status_text
+            return data_return
+        _data_template = self.__class__._DataTemplatesByOp[op]
         # endregion
 
-        _desired_status_code = 200
-
         # region Get Response Template (updated with data) based on Client Type
-        if self.sdk_client == settings.SDK_CLIENT_TYPE_ASYNC:
+        if self._sdk_client == test.SDK_CLIENT_TYPE_ASYNC:
             _response_template = _SDK_ASYNC_CLIENT_RESPONSE_TEMPLATE
-            _response_template[_SDK_ASYNC_CLIENT_ATTR_STATUS_CODE] = _desired_status_code
+            _response_template[_SDK_ASYNC_CLIENT_ATTR_STATUS_CODE] = self._desired_status_code
             _response_template[_SDK_ASYNC_CLIENT_ATTR_DATA] = _data_template
         else:
             _desired_json = json.dumps(_data_template)
-            _response_template = MockHTTPResponse(_desired_json, status_code=200)
+            _response_template = MockHTTPResponse(_desired_json, self._desired_status_code)
         # endregion
 
         data_return['response'] = _response_template
         data_return['text'] = 'Created Response Template'
+        return data_return
 
 
-class MatrixDeviceManagement:
+# TODO: Device management returns the data directly without any formatting
+#  i.e. desired data is at root level
 
-    def create_async_response_get_realsense_migrated(self):
-        ...
+class MatrixDeviceManagement(SCService):
 
+    Op1 = test.device_management.OP_REALSENSE_MIGRATED
+    Op2 = test.device_management.OP_GET_DEVICE_SLOTS
 
-    def create_async_response_get_device_slots(self):
-        ...
+    _DataTemplatesByOp = test.device_management.DATA_TEMPLATE_BY_OP
+
+    def __init__(self, client: str):
+
+        super().__init__(client)
+
+        self.ops = {
+            self.__class__.Op1,
+            self.__class__.Op2
+        }
+
+    def create_response_for_op(self, op: str) -> dict:
+
+        print(f'Creating Mock response for op: {op} in {self.__class__.__name__}')
+
+        data_return = {
+            'response': None,
+            'text': 'default'
+        }
+
+        if op not in self.ops:
+            print(f'Ops in this class are: {self.ops}')
+            data_return['text'] = f'Given op: {op} does not have a test response available.'
+            return data_return
+
+        # region Get Data Template for Op
+        if op not in self.__class__._DataTemplatesByOp:
+            _status_text = f'No Data Template defined for Op: {op} in {self.__class__.__name__}'
+            print(_status_text)
+            data_return['text'] = _status_text
+            return data_return
+        _data_template = self.__class__._DataTemplatesByOp[op]
+        # endregion
+
+        # region Get Response Template (updated with data) based on Client Type
+        if self._sdk_client == test.SDK_CLIENT_TYPE_ASYNC:
+            _response_template = _SDK_ASYNC_CLIENT_RESPONSE_TEMPLATE
+            _response_template[_SDK_ASYNC_CLIENT_ATTR_STATUS_CODE] = self._desired_status_code
+            _response_template[_SDK_ASYNC_CLIENT_ATTR_DATA] = _data_template
+        else:
+            _desired_json = json.dumps(_data_template)
+            _response_template = MockHTTPResponse(_desired_json, self._desired_status_code)
+        # endregion
+
+        data_return['response'] = _response_template
+        data_return['text'] = 'Created Response Template'
+        return data_return
