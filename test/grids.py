@@ -2,6 +2,11 @@ SERVICE_ID = 'SCGrids'
 OP_READ_ZONE = 'readZone'
 OP_READ_BUILDING = 'readBuilding'
 OP_READ_PROPERTY = 'readProperty'
+OPS = {
+    OP_READ_ZONE,
+    OP_READ_BUILDING,
+    OP_READ_PROPERTY
+}
 
 # region Data Template for each Op
 _DATA_TEMPLATE_READ_ZONE = {
@@ -55,4 +60,14 @@ TEST_OPERATING_HOURS_SET_1 = {
     "6": [
         {"End": "1800", "Start": "0700"}
     ]
+}
+
+SDK_ASYNC_CLIENT_ATTR_STATUS_CODE = 'status'
+SDK_ASYNC_CLIENT_ATTR_MESSAGE = 'message'
+SDK_ASYNC_CLIENT_ATTR_DATA = 'data'
+
+RESPONSE_TEMPLATE_GRIDS = {
+    SDK_ASYNC_CLIENT_ATTR_STATUS_CODE: 200,
+    SDK_ASYNC_CLIENT_ATTR_MESSAGE: "Success",
+    SDK_ASYNC_CLIENT_ATTR_DATA: {}
 }

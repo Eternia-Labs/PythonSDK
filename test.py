@@ -706,7 +706,7 @@ def test_device_management_api(op: str, org: str = None, pid: str = None, client
     # Supply args to mocker to update the mock data
 
     if return_mock is True:
-        response_mocker = test.data.MatrixDeviceManagement(client)
+        response_mocker = test.data.SCDeviceManagement(client)
         _create_mock_resp = response_mocker.create_response_for_op(op)
         mock_response = _create_mock_resp['response']
         mock_response_status = _create_mock_resp['text']
@@ -774,6 +774,7 @@ def test_device_management_api(op: str, org: str = None, pid: str = None, client
     print("Keys in Response content is:")
     print(list(response_content.keys()))
 
+    print('Response content is:')
     print(pformat(response_content))
 
 
@@ -791,7 +792,7 @@ def test_grids_api(op: str, org: str = None, pid: str = None, client: str = None
     # SUpply args to mocker to update the mock data
 
     if return_mock is True:
-        response_mocker = test.data.MatrixGrids(client)
+        response_mocker = test.data.SCGrids(client)
         _create_mock_resp = response_mocker.create_response_for_op(op)
         mock_response = _create_mock_resp['response']
         mock_response_status = _create_mock_resp['text']
@@ -859,7 +860,7 @@ def test_grids_api(op: str, org: str = None, pid: str = None, client: str = None
         print(pformat(desired_data))
 
 
-def test_workforce_apis(op: str, org: str = None, pid: str = None, return_mock: bool = True):
+def test_workforce_apis(op: str, org: str = None, pid: str = None, client: str = None, return_mock: bool = True):
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -867,11 +868,18 @@ def test_workforce_apis(op: str, org: str = None, pid: str = None, return_mock: 
     if pid is None:
         pid = os.environ["TEST_PID"]
 
+    if client is None:
+        client = CLIENT_TYPE_ASYNC
+
     if return_mock is True:
-        if op == WORKFORCE_MGMT_OP_FIND_AVAILABILITY:
-            response_content = WORKFORCE_FIND_AVAILABILITY_RESPONSE_2
-        else:
-            response_content = WORKFORCE_ASSIGN_INCIDENT_RESPONSE
+        response_mocker = test.data.SCWorkforceManagement(client)
+        _create_mock_resp = response_mocker.create_response_for_op(op)
+        mock_response = _create_mock_resp['response']
+        mock_response_status = _create_mock_resp['text']
+
+        if mock_response is None:
+            raise Exception(f'Failed to create mock response ({mock_response_status})')
+        response_content = mock_response
     else:
 
         from SDK.SCWorkforceManagementServices.API import SCWorkforcemanagement
@@ -960,10 +968,8 @@ def test_workforce_apis(op: str, org: str = None, pid: str = None, return_mock: 
     print("Keys in Response content is:")
     print(list(response_content.keys()))
 
-    if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
-        desired_data = response_content["data"]
-        print('Extracted "data" from response. Data is:')
-        print(pformat(desired_data))
+    print('Response content is:')
+    print(pformat(response_content))
 
 
 # THIS IS WIP
@@ -1098,7 +1104,7 @@ def parse_sdk_response(client_type: str, sdk_response: any):
 
 if __name__ == "__main__":
     run_test(
-        service=SERVICE_ID_DEVICE_MANAGEMENT,
-        op=DEVICE_MANAGEMENT_OP_REALSENSE_MIGRATED,
+        service=SERVICE_ID_WORKFORCE_MANAGEMENT,
+        op=WORKFORCE_MGMT_OP_FIND_AVAILABILITY,
         return_mock=True
     )
