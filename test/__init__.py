@@ -1,0 +1,17 @@
+# region Service Names and respective Ops
+SERVICE_ID_GRIDS = 'SCGrids'
+GRIDS_OP_GET_ZONE_INFO = 'readZone'
+GRIDS_OP_GET_BUILDING_INFO = 'readBuilding'
+GRIDS_OP_GET_PROPERTY_INFO = 'readProperty'
+
+SERVICE_ID_DEVICE_MANAGEMENT = 'SCDeviceManagement'
+DEVICE_MANAGEMENT_OP_REALSENSE_MIGRATED = 'realSenseMigrated'
+DEVICE_MANAGEMENT_OP_GET_DEVICE_SLOTS = 'getDeviceSlots'
+
+SERVICE_ID_WORKFORCE_MANAGEMENT = 'SCWorkforcemanagement'
+WORKFORCE_MGMT_OP_ASSIGN_INCIDENT = 'assignIncident'
+WORKFORCE_MGMT_OP_FIND_AVAILABILITY = 'findAvailability'
+WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = 'createIncidentWithoutAssignee'
+
+SEND_SMS_OP = 'sendSMS'
+# endregion
