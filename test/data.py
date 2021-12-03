@@ -6,6 +6,7 @@ from test import definitions
 from test import grids
 from test import device_management
 from test import workforce_management
+from test import sms_gateway
 
 
 # TODO: Below attributes should go in definitions of project root
@@ -58,7 +59,7 @@ class SCGrids(SCService):
             'text': 'default'
         }
 
-        if op not in self.ops:
+        if op not in self.__class__.Ops:
             print(f'Ops in this class are: {self.ops}')
             data_return['text'] = f'Given op: {op} does not have a test response available.'
             return data_return
@@ -105,7 +106,7 @@ class SCDeviceManagement(SCService):
             'text': 'default'
         }
 
-        if op not in self.ops:
+        if op not in self.__class__.Ops:
             print(f'Ops in this class are: {self.ops}')
             data_return['text'] = f'Given op: {op} does not have a test response available.'
             return data_return
@@ -183,6 +184,51 @@ class SCWorkforceManagement(SCService):
                 data = json.dumps(_data_template)
 
             _response_template = MockHTTPResponse(data, self._desired_status_code)
+        # endregion
+
+        data_return['response'] = _response_template
+        data_return['text'] = 'Created Response Template'
+        return data_return
+
+
+class SCMessageService(SCService):
+
+    Ops = sms_gateway.OPS
+    _DataTemplatesByOp = sms_gateway.DATA_TEMPLATE_BY_OP
+
+    def __init__(self, client: str):
+
+        super().__init__(client)
+
+    def create_response_for_op(self, op: str) -> dict:
+
+        print(f'Creating Mock response for op: {op} in {self.__class__.__name__}')
+
+        data_return = {
+            'response': None,
+            'text': 'default'
+        }
+
+        if op not in self.__class__.Ops:
+            print(f'Ops in this class are: {self.ops}')
+            data_return['text'] = f'Given op: {op} does not have a test response available.'
+            return data_return
+
+        # region Get Data Template for Op
+        if op not in self.__class__._DataTemplatesByOp:
+            _status_text = f'No Data Template defined for Op: {op} in {self.__class__.__name__}'
+            print(_status_text)
+            data_return['text'] = _status_text
+            return data_return
+        _data_template = self.__class__._DataTemplatesByOp[op]
+        # endregion
+
+        # region Get Response Template (updated with data) based on Client Type
+        if self._sdk_client == definitions.SDK_CLIENT_TYPE_ASYNC:
+            _response_template = _data_template
+        else:
+            _desired_json = json.dumps(_data_template)
+            _response_template = MockHTTPResponse(_desired_json, self._desired_status_code)
         # endregion
 
         data_return['response'] = _response_template
