@@ -50,23 +50,25 @@ class SCSMSGateway:
         except Exception as e:
             print("Exception " + str(e))
 
-    def publishSMS(self, org, pid, propid, client=None):
+    def publishSMS(self, org, pid, propid, expJson, client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
                 op="smsgateway.publishSMS",
+                body=json.loads(expJson),
                 org=org,
                 pid=pid,
                 propid=propid,
+                
             )
         else:
             res = self.Async_client.makeRequest(
                 httpmethod="POST",
                 op="smsgateway.publishSMS",
+                body=json.loads(expJson),
                 org=org,
                 pid=pid,
                 propid=propid,
             )
         return res
 
-    
