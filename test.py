@@ -972,7 +972,6 @@ def test_workforce_apis(op: str, org: str = None, pid: str = None, client: str =
     print(pformat(response_content))
 
 
-# THIS IS WIP
 def test_sms_api(op: str, org: str = None, pid: str = None, return_mock: bool = True):
 
     if org is None:
