@@ -1,4 +1,4 @@
-from tornado.httpclient import AsyncHTTPClient, HTTPRequest
+from tornado.httpclient import AsyncHTTPClient, HTTPRequest, HTTPClientError
 from tornado.ioloop import IOLoop
 from tornado.escape import json_encode
 import asyncio
@@ -118,16 +118,22 @@ class ClientV1:
         )
 
         async def toExecute():
+
             try:
-                if self.session is None:
-                    print("self.session is currently None")
-                    self.session = AsyncHTTPClient()
-                    print("self.session now set to AsyncHTTPClient()")
+                # if self.session is None:
+                print("self.session is currently None")
+                self.session = AsyncHTTPClient()
+                print("self.session now set to AsyncHTTPClient()")
                 response = await self.session.fetch(req)
                 # print(json.loads(response.body))
+            except HTTPClientError as e:
+                print("inside exception HTTPClientError", str(e))
+                error = json.loads(e.response.body.decode("utf8"))
+                return {"code": "failure", "error": error}
             except Exception as e:
                 print("inside exception", str(e))
-                return e
+                return {"code": "failure", "error": f"{e}"}
+
             return json.loads(response.body)
 
         print("making request to ---", finalURI, "----")
