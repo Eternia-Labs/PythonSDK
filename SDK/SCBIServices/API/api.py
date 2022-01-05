@@ -170,6 +170,69 @@ class SCBi:
             )
         return res
 
+    def excelReportGenerationFailure(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.excelReportGenerationFailure",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.excelReportGenerationFailure",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
+    def excelReportGenerationSuccess(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.excelReportGenerationSuccess",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.excelReportGenerationSuccess",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
+    def excelGenerationTaskStarted(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.excelGenerationTaskStarted",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.excelGenerationTaskStarted",
+                body=json.loads(expJson),
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        return res
+
     def kpiJobFailure(self, org, pid, propid, expJson, client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
