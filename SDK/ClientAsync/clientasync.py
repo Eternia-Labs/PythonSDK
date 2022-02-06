@@ -5,29 +5,45 @@ import asyncio
 import json
 import requests
 import os
+import hmac, hashlib, time
+import yaml, jmespath
 
-# AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
+AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 
 signing_status = "SIGNING_STATUS_PYTHONSDK"
-user_name = "USER_NAME_PYTHONSDK"
-user_password = "PASSWORD_PYTHONSDK"
-
-name = os.getenv(user_name)
-password = os.getenv(user_password)
 
 if not os.getenv(signing_status):
     signing = "Disabled"
 else:
     signing = os.getenv(signing_status)
 
-if signing == "Enabled":
-    body = {"uname": name, "passwd": password}
-    body = json.dumps(body)
-    access_token = requests.post(
-        "https://console.smartclean.io/api/unauth/v1/login", body
-    )
-    # print(json.loads(access_token.text))
-    access_token = json.loads(access_token.text)["access_token"]
+
+def credential_checker(filtered_credentials: dict):
+
+    print(filtered_credentials)
+
+    if (
+        "sc_access_key" not in filtered_credentials
+        or "sc_secret_key" not in filtered_credentials
+        or "x_sc_identity" not in filtered_credentials
+        or "x_api_key" not in filtered_credentials
+    ):
+        return {
+            "code": "failure",
+            "error": f"Either 'sc_access_key' or 'sc_secret_key' or 'x_sc_identity' or 'x_api_key' is not provided in the sc-tenants.yml file.",
+        }
+    elif (
+        not filtered_credentials["sc_access_key"]
+        or not filtered_credentials["sc_secret_key"]
+        or not filtered_credentials["x_sc_identity"]
+        or not filtered_credentials["x_api_key"]
+    ):
+        return {
+            "code": "failure",
+            "error": f"Either 'sc_access_key' or 'sc_secret_key' or 'x_sc_identity' or 'x_api_key' value is not provided in the sc-tenants.yml file.",
+        }
+
+    return {"code": "success", "data": f"All values are provided."}
 
 
 class ClientV1:
@@ -37,30 +53,36 @@ class ClientV1:
         self.url = None
         self.service = None
         self.headers = None
+        self.xScIdentity = None
+        self.xApiKey = None
+        self.secret_key = None
+        self.access_key = None
         print("Message from Async Client:")
         print(
             "Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'."
         )
 
     def initializeForService(
-        self, prefix, uri, apiversion, port=None, service="SCGrids"
+        self, prefix, uri, apiversion, port=None, service="scgrids"
     ):
 
         if signing == "Disabled" and port != None:
+            print(
+                "Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'."
+            )
             self.url = (
                 prefix + "://" + uri + ":" + str(port) + "/" + apiversion + "/actions"
             )
             self.headers = {"content-type": "application/json"}
         elif signing == "Disabled" and port == None:
+            print(
+                "Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'."
+            )
             self.url = prefix + "://" + uri + "/" + apiversion + "/actions"
             self.headers = {"content-type": "application/json"}
         elif signing == "Enabled":
             self.url = prefix + "://" + uri + "/" + apiversion + "/actions"
-            self.headers = {
-                "content-type": "application/json",
-                "x-sc-identity": "external",
-                "Authorization": access_token,
-            }
+
         print("setting url")
         self.service = service
 
@@ -108,6 +130,57 @@ class ClientV1:
                 + "&pid="
                 + str(pid)
             )
+
+        if signing == "Enabled" and propid!=None:
+
+            self.etime = str(int(time.time()))
+
+            dirname = os.path.dirname(__file__).split("/")[0]
+            dirname = os.path.join(dirname, "sc-tenants.yml")
+            a_yaml_file = open(dirname)
+            parsed_yaml_file = yaml.load(a_yaml_file)
+            if propid not in parsed_yaml_file["tenants"]:
+                return {"code": "failure", "error": "No such property with the provided propid exists in the sc-tenants.yml file."}
+
+            filtered_credentials = parsed_yaml_file["tenants"][propid]
+
+            checker = credential_checker(filtered_credentials)
+
+            if checker["code"] == "failure":
+                return {"code": "failure", "error": checker["error"]}
+
+            self.access_key = filtered_credentials["sc_access_key"]
+            self.secret_key = filtered_credentials["sc_secret_key"]
+            self.secret_key = bytes(self.secret_key, "utf-8")
+            self.x_sc_identity = filtered_credentials["x_sc_identity"]
+            self.x_api_key = filtered_credentials["x_api_key"]
+
+            total_paramsStr = (
+                self.service
+                + "/"
+                + propid
+                + "/"
+                + op
+                + "/"
+                + self.access_key
+                + "/"
+                + self.etime
+            )
+            total_params = bytes(total_paramsStr, "utf-8")
+            signature = hmac.new(
+                self.secret_key, total_params, hashlib.sha256
+            ).hexdigest()
+
+            self.headers = {
+                "content-type": "application/json",
+                "x-sc-identity": self.x_sc_identity,
+                "Accept": "application/json",
+                "x-sc-time": self.etime,
+                "Authorization": f"SCHMAC_V1;{self.access_key};{signature}",
+            }
+
+        elif signing == "Enabled" and propid==None:
+            return {"code": "failure", "error": "Missing propid in the request."}
 
         req = HTTPRequest(
             finalURI,

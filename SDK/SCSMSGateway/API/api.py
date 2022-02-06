@@ -32,19 +32,19 @@ class SCSMSGateway:
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, port, service="SMSGateway"
+                    prefix, uri, apiversion, port, service="smsgateway"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, port, service="SMSGateway"
+                    prefix, uri, apiversion, port, service="smsgateway"
                 )
 
             else:
                 print("SMSGATEWAY: Port is not set")
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, service="SMSGateway"
+                    prefix, uri, apiversion, service="smsgateway"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, service="SMSGateway"
+                    prefix, uri, apiversion, service="smsgateway"
                 )
 
         except Exception as e:
@@ -59,7 +59,6 @@ class SCSMSGateway:
                 org=org,
                 pid=pid,
                 propid=propid,
-                
             )
         else:
             res = self.Async_client.makeRequest(
@@ -71,4 +70,3 @@ class SCSMSGateway:
                 propid=propid,
             )
         return res
-

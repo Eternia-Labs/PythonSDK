@@ -32,18 +32,18 @@ class SCReports:
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, port, service="SCReports"
+                    prefix, uri, apiversion, port, service="screports"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, port, service="SCReports"
+                    prefix, uri, apiversion, port, service="screports"
                 )
             else:
                 print("SCREPORTS: Port is not set")
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, service="SCReports"
+                    prefix, uri, apiversion, service="screports"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, service="SCReports"
+                    prefix, uri, apiversion, service="screports"
                 )
         except Exception as e:
             print("Exception " + str(e))

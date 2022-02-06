@@ -7,5 +7,5 @@ setuptools.setup(
     author_email="shikha@smartclean.sg",
     description="Python SDK for all services.",
     url="https://github.com/Shikha-SC/PythonSDK",
-    packages=setuptools.find_packages()
+    packages=setuptools.find_packages(),
 )

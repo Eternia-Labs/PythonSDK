@@ -21,7 +21,7 @@ class SCTasks:
             if os.getenv(HOST):
                 uri = os.getenv(HOST)
             else:
-                uri = "console.smartclean.io/api/scbi"
+                uri = "console.smartclean.io/api/sctasks"
                 print("SCTASKS: Host is not set")
             if os.getenv(PROTOCOL):
                 prefix = os.getenv(PROTOCOL)
@@ -32,18 +32,18 @@ class SCTasks:
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, port, apiversion, service="SCTasks"
+                    prefix, uri, port, apiversion, service="sctasks"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, port, apiversion, service="SCTasks"
+                    prefix, uri, port, apiversion, service="sctasks"
                 )
             else:
                 print("SCTASKS: Port is not set")
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, service="SCTasks"
+                    prefix, uri, apiversion, service="sctasks"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, service="SCTasks"
+                    prefix, uri, apiversion, service="sctasks"
                 )
         except Exception as e:
             print("Exception " + str(e))
