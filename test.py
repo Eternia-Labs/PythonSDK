@@ -1080,7 +1080,7 @@ def test_partners_solutions_op(op: str, org: str, prop_id: str, client: str, ret
 
     # Supply args to mocker to update the mock data
 
-    solution_id = 'TestSolution1'
+    solution_id = 'testSolution1'
     # pid = 'scnoop'
 
     if return_mock is True:
@@ -1217,6 +1217,6 @@ def parse_sdk_response(client_type: str, sdk_response: any):
 if __name__ == "__main__":
     run_test(
         service=SERVICE_ID_PARTNERS_SOLUTIONS,
-        op=partners_solutions.OP_DENY_SOLUTION_FOR_PROPERTY,
-        return_mock=False
+        op=partners_solutions.OP_ADD_SOLUTION_TO_PROPERTY,
+        return_mock=True
     )
