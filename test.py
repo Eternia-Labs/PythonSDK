@@ -6,10 +6,13 @@ from tornado.httpclient import HTTPClientError
 from tornado.simple_httpclient import HTTPTimeoutError
 
 import test.data
-from test import grids
-from test import sms_gateway
-from test import device_management
-from test import workforce_management
+from test import (
+    grids,
+    sms_gateway,
+    device_management,
+    workforce_management,
+    partners_solutions
+)
 
 LOAD_ENV_VARS = True
 EXTRACT_DATA_FROM_SDK_RESPONSE = True
@@ -18,22 +21,36 @@ CLIENT_TYPE_SYNC = "Sync"
 CLIENT_TYPE_ASYNC = "Async"
 
 # region Service Names and respective Ops
+# region SCGrids
 SERVICE_ID_GRIDS = grids.SERVICE_ID
 GRIDS_OP_GET_ZONE_INFO = grids.OP_READ_ZONE
 GRIDS_OP_GET_BUILDING_INFO = grids.OP_READ_BUILDING
 GRIDS_OP_GET_PROPERTY_INFO = grids.OP_READ_PROPERTY
+# endregion
 
+# region SCDeviceManagement
 SERVICE_ID_DEVICE_MANAGEMENT = device_management.SERVICE_ID
 DEVICE_MANAGEMENT_OP_REALSENSE_MIGRATED = device_management.OP_REALSENSE_MIGRATED
 DEVICE_MANAGEMENT_OP_GET_DEVICE_SLOTS = device_management.OP_GET_DEVICE_SLOTS
+# endregion
 
+# region SCWorkforceManagement
 SERVICE_ID_WORKFORCE_MANAGEMENT = workforce_management.SERVICE_ID
 WORKFORCE_MGMT_OP_ASSIGN_INCIDENT = workforce_management.OP_ASSIGN_INCIDENT
 WORKFORCE_MGMT_OP_FIND_AVAILABILITY = workforce_management.OP_FIND_AVAILABILITY
 WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = workforce_management.OP_CREATE_INCIDENT_NO_ASSIGNEE
+# endregion
 
+# region SCSMSGateway
 SERVICE_ID_SMS_GATEWAY = sms_gateway.SERVICE_ID
 SMS_GATEWAY_OP_PUBLISH_SMS = sms_gateway.OP_PUBLISH_SMS
+# endregion
+
+# region SCPartnersSolutions
+SERVICE_ID_PARTNERS_SOLUTIONS = partners_solutions.SERVICE_ID
+OPS = partners_solutions.OPS
+# endregion
+
 # endregion
 
 
