@@ -10,6 +10,9 @@ PORT = "SC_GRIDS_PORT"
 apiversion = "v1"
 
 
+# TODO:
+#  1. Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
+
 class SCGrids:
     def __init__(self):
         self.Async_client = clientasync.getClient()
@@ -51,6 +54,14 @@ class SCGrids:
             print("Exception " + str(e))
 
     def listProperties(self, org, pid, client=None):
+        """
+        Gets list of all Properties
+
+        :param org:
+        :param pid:
+        :param client:
+        :return:
+        """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST", op="scgrids.listProperties", org=org, pid=pid
@@ -58,10 +69,48 @@ class SCGrids:
         else:
             res = self.Async_client.makeRequest(
                 httpmethod="POST", op="scgrids.listProperties", org=org, pid=pid
+            )
+        return res
+
+    # region Requests for Property (propid is required in query params)
+    def readProperty(self, org, pid, propid, client=None):
+        """
+        Get details of Property
+
+        :param org:
+        :param pid:
+        :param propid:
+        :param client:
+        :return:
+        """
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scgrids.readProperty",
+                org=org,
+                pid=pid,
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scgrids.readProperty",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         return res
 
     def listBuilding(self, org, pid, propid, client=None):
+        """
+        Get list of Buildings in Property
+
+        :param org:
+        :param pid:
+        :param propid:
+        :param client:
+        :return:
+        """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
@@ -79,27 +128,18 @@ class SCGrids:
                 propid=propid,
             )
         return res
+    # endregion
 
-    def readProperty(self, org, pid, propid, client=None):
-        if client == "Sync":
-            res = self.Sync_client.makeRequest(
-                httpmethod="POST",
-                op="scgrids.readProperty",
-                org=org,
-                pid=pid,
-                propid=propid,
-            )
-        else:
-            res = self.Async_client.makeRequest(
-                httpmethod="POST",
-                op="scgrids.readProperty",
-                org=org,
-                pid=pid,
-                propid=propid,
-            )
-        return res
-
+    # region Requests for Building (pid is required in query params)
     def readBuilding(self, org, pid, client=None):
+        """
+        Get details of Building
+
+        :param org:
+        :param pid:
+        :param client:
+        :return:
+        """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST", op="scgrids.readBuilding", org=org, pid=pid
@@ -110,10 +150,108 @@ class SCGrids:
             )
         return res
 
-    # TODO: Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
+    def listLevelsByBuilding(self, org, pid, client=None):
+        """
+        Get list of all Levels in Building
+
+        :param org:
+        :param pid:
+        :param client:
+        :return:
+        """
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid
+            )
+        return res
+
+    def buildingZoneMap(self, org, pid, expJson, client=None):
+        """
+        Get Zone map in Building
+
+        :param org:
+        :param pid:
+        :param expJson:
+        :param client:
+        :return:
+        """
+
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scgrids.buildingZoneMap",
+                org=org,
+                pid=pid,
+                body=json.loads(expJson),
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scgrids.buildingZoneMap",
+                org=org,
+                pid=pid,
+                body=json.loads(expJson),
+            )
+        return res
+
+    def listBuildingMetrics(self, org, pid, client=None):
+        """
+        Gets all metrics (eg count of members) for Building
+
+        :param org:
+        :param pid:
+        :param client:
+        :return:
+        """
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid
+            )
+        return res
+    # endregion
+
+    # region Requests for Level (LID is required in data)
+    def listZonesByLevel(self, org, pid, expJson, client=None):
+        """
+        Gets list of all Zones in Level
+
+        :param org:
+        :param pid:
+        :param expJson:
+        :param client:
+        :return:
+        """
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scgrids.listZonesByLevel",
+                org=org,
+                pid=pid,
+                body=json.loads(expJson),
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scgrids.listZonesByLevel",
+                org=org,
+                pid=pid,
+                body=json.loads(expJson),
+            )
+        return res
+    # endregion
+
+    # region Requests for Zone (InsID is required in data)
     def read_zone(self, org: str, pid: str, exp_json: str, client=None) -> any:
         """
-        This gets the Zone given by it's ID for a Building
+        Gets details of Zone
 
         :param org: Organisation ID
         :param pid: Project ID
@@ -140,63 +278,4 @@ class SCGrids:
 
         res = _client_obj.makeRequest(**request_kwargs)
         return res
-
-    def listBuildingMetrics(self, org, pid, client=None):
-        if client == "Sync":
-            res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid
-            )
-        else:
-            res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid
-            )
-        return res
-
-    def listZonesByLevel(self, org, pid, expJson, client=None):
-        if client == "Sync":
-            res = self.Sync_client.makeRequest(
-                httpmethod="POST",
-                op="scgrids.listZonesByLevel",
-                org=org,
-                pid=pid,
-                body=json.loads(expJson),
-            )
-        else:
-            res = self.Async_client.makeRequest(
-                httpmethod="POST",
-                op="scgrids.listZonesByLevel",
-                org=org,
-                pid=pid,
-                body=json.loads(expJson),
-            )
-        return res
-
-    def listLevelsByBuilding(self, org, pid, client=None):
-        if client == "Sync":
-            res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid
-            )
-        else:
-            res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid
-            )
-        return res
-
-    def buildingZoneMap(self, org, pid, expJson, client=None):
-        if client == "Sync":
-            res = self.Sync_client.makeRequest(
-                httpmethod="POST",
-                op="scgrids.buildingZoneMap",
-                org=org,
-                pid=pid,
-                body=json.loads(expJson),
-            )
-        else:
-            res = self.Async_client.makeRequest(
-                httpmethod="POST",
-                op="scgrids.buildingZoneMap",
-                org=org,
-                pid=pid,
-                body=json.loads(expJson),
-            )
-        return res
+    # endregion
