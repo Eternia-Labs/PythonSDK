@@ -2,122 +2,78 @@ from tornado.httpclient import HTTPRequest
 import json
 import requests
 import os
+import time
+import hmac, hashlib, time
+from urllib.request import urlopen
+import yaml
+import jmespath
 
 signing_status = "SIGNING_STATUS_PYTHONSDK"
-user_name = "USER_NAME_PYTHONSDK"
-user_password = "PASSWORD_PYTHONSDK"
-
-name = os.getenv(user_name)
-password = os.getenv(user_password)
 
 if not os.getenv(signing_status):
     signing = "Disabled"
 else:
     signing = os.getenv(signing_status)
 
-if signing == "Enabled":
-    body = {"uname": name, "passwd": password}
-    body = json.dumps(body)
-    access_token = requests.post(
-        "https://console.smartclean.io/api/unauth/v1/login", body
-    )
-    access_token = json.loads(access_token.text)["access_token"]
+
+def credential_checker(filtered_credentials: dict):
+
+    print(filtered_credentials)
+
+    if (
+        "sc_access_key" not in filtered_credentials
+        or "sc_secret_key" not in filtered_credentials
+    ):
+        return {
+            "code": "failure",
+            "error": f"Either 'sc_access_key' or 'sc_secret_key' is not provided in the sc-tenants.yml file.",
+        }
+    elif (
+        not filtered_credentials["sc_access_key"]
+        or not filtered_credentials["sc_secret_key"]
+    ):
+        return {
+            "code": "failure",
+            "error": f"Either 'sc_access_key' or 'sc_secret_key' value is not provided in the sc-tenants.yml file.",
+        }
+
+    return {"code": "success", "data": f"All values are provided."}
 
 
 class ClientV1:
     def __init__(self):
 
-        self.name = os.getenv("USER_NAME_PYTHONSDK")
-        self.password = os.getenv("PASSWORD_PYTHONSDK")
         self.timeout = 10
         self.session = None
         self.url = None
         self.service = None
         self.headers = None
-        self.flag = 0
+        self.access_key = None
+        self.secret_key = None
         print("Message from Sync Client:")
-        print(
-            "Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'."
-        )
-
-    def getAccessToken(self):
-        try:
-            body = {"uname": self.name, "passwd": self.password}
-            body = json.dumps(body)
-            request = requests.post(
-                "https://console.smartclean.io/api/unauth/v1/login", body
-            )
-
-            if request.status_code != 200:
-                return None
-
-        except Exception as e:
-            return {"code": "Failure", "Error": f"{e}"}
-        else:
-            return "Successful", request
-
-    def requestNewToken(makeRequest):
-        def wrapper(self, *args, **kwargs):
-            response = makeRequest(self, *args, **kwargs)
-
-            if type(response) == dict:
-                return response
-
-            elif response.status_code == 401:
-                response_access = self.getAccessToken()
-                refresh_token = json.loads(response_access[1].text)
-
-                if "refresh_token" not in refresh_token:
-                    return {
-                        "code": "Failure",
-                        "data": "Request for refresh token failed.",
-                    }
-
-                refresh_token = refresh_token["refresh_token"]
-                body = {"rtoken": f"{refresh_token}"}
-
-                body = json.dumps(body)
-                request = requests.post(
-                    "https://console.smartclean.io/api/unauth/v1/login", body
-                )
-
-                if request.status_code != 200:
-                    response = self.getAccessToken()
-                    if response == None:
-                        response = {"code": "Failure", "Error": "All retries failed."}
-                        return response
-                    else:
-                        self.access_token = response[1].json()["access_token"]
-                        response = makeRequest(self, *args, **kwargs)
-                        return response
-
-                elif type(response) == dict:
-                    return response
-
-                else:
-                    self.access_token = request.json()["access_token"]
-                    response = makeRequest(self, *args, **kwargs)
-                    return response
-            else:
-                return response
-
-        return wrapper
 
     def initializeForService(
         self, prefix, uri, apiversion, port=None, service="SCGrids"
     ):
 
         if signing == "Disabled" and port != None:
+            print(
+                "Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'."
+            )
             self.url = (
                 prefix + "://" + uri + ":" + str(port) + "/" + apiversion + "/actions"
             )
             self.headers = {"content-type": "application/json"}
         elif signing == "Disabled" and port == None:
+            print(
+                "Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'."
+            )
             self.url = prefix + "://" + uri + "/" + apiversion + "/actions"
             self.headers = {"content-type": "application/json"}
         elif signing == "Enabled":
             self.url = prefix + "://" + uri + "/" + apiversion + "/actions"
-            print(self.url)
+
+        print("setting url")
         self.service = service
 
     def seturl(self, url):
@@ -132,21 +88,9 @@ class ClientV1:
     def getApiVersion(self):
         return self.apiversion
 
-    @requestNewToken
     def makeRequest(
         self, httpmethod, op, propid=None, body=None, org="SMARTCLEAN", pid="scnoop"
     ):
-        if signing == "Enabled":
-
-            if self.flag == 0:
-                self.access_token = access_token
-                self.flag = 1
-
-            self.headers = {
-                "content-type": "application/json",
-                "x-sc-identity": "external",
-                "Authorization": self.access_token,
-            }
 
         if propid:
             finalURI = (
@@ -171,7 +115,53 @@ class ClientV1:
                 + str(pid)
             )
 
-        print(finalURI)
+        if signing == "Enabled" and propid!=None:
+
+            self.etime = str(int(time.time()))
+
+            dirname = os.path.dirname(__file__).split("/")[0]
+            dirname = os.path.join(dirname, "sc-tenants.yml")
+            a_yaml_file = open(dirname)
+            parsed_yaml_file = yaml.load(a_yaml_file)
+            if propid not in parsed_yaml_file["tenants"]:
+                return {"code": "failure", "error": "No such property with the provided propid exists in the sc-tenants.yml file."}
+            
+            filtered_credentials = parsed_yaml_file["tenants"][propid]
+
+            checker = credential_checker(filtered_credentials)
+
+            if checker["code"] == "failure":
+                return {"code": "failure", "error": checker["error"]}
+
+            self.access_key = filtered_credentials["sc_access_key"]
+            self.secret_key =  bytes(filtered_credentials["sc_secret_key"], "utf-8")
+
+            total_paramsStr = (
+                self.service
+                + "/"
+                + propid
+                + "/"
+                + op
+                + "/"
+                + self.access_key
+                + "/"
+                + self.etime
+            )
+            total_params = bytes(total_paramsStr, "utf-8")
+            signature = hmac.new(
+                self.secret_key, total_params, hashlib.sha256
+            ).hexdigest()
+
+            self.headers = {
+                "content-type": "application/json",
+                "Accept": "application/json",
+                "x-sc-identity": "external",
+                "x-sc-time": self.etime,
+                "Authorization": f"SCHMAC_V1;{self.access_key};{signature}",
+            }
+        
+        elif signing == "Enabled" and propid==None:
+            return {"code": "failure", "error": "Missing propid in the request."}
 
         try:
             if httpmethod == "GET":
@@ -186,7 +176,7 @@ class ClientV1:
         except Exception as e:
             return {"code": "Failure", "Error": f"{e}"}
 
-        return response
+        return response.json()
 
     # def __del__(self):
     # 	print("Deleting client")
