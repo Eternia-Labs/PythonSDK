@@ -120,7 +120,7 @@ class SCWorkforcemanagement:
 
     # TODO: Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
     def find_availability_for_incident(
-        self, org: str, prop_id: str, pid: str, exp_json: str, client=None
+        self, org, pid, propid, expJson, client=None
     ) -> any:
         """
         This returns availability response for incident
@@ -144,10 +144,10 @@ class SCWorkforcemanagement:
         request_kwargs = {
             "httpmethod": _method,
             "op": _op,
-            "propid": prop_id,
+            "propid": propid,
             "org": org,
             "pid": pid,
-            "body": json.loads(exp_json),
+            "body": json.loads(expJson),
         }
 
         res = _client_obj.makeRequest(**request_kwargs)
@@ -155,7 +155,7 @@ class SCWorkforcemanagement:
 
     # TODO: Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
     def assign_shift_to_incident(
-        self, org: str, prop_id: str, pid: str, exp_json: str, client=None
+        self, org, pid, propid, expJson, client=None
     ) -> any:
         """
         This returns availability response for incident
@@ -179,10 +179,10 @@ class SCWorkforcemanagement:
         request_kwargs = {
             "httpmethod": _method,
             "op": _op,
-            "propid": prop_id,
+            "propid": propid,
             "org": org,
             "pid": pid,
-            "body": json.loads(exp_json),
+            "body": json.loads(expJson),
         }
 
         res = _client_obj.makeRequest(**request_kwargs)
