@@ -57,7 +57,7 @@ class SCMetrics:
         except Exception as e:
             print("Exception " + str(e))
 
-    def getModuleMetrics(self, org, pid, expJson, propid=None, client=None):
+    def getModuleMetrics(self, org, pid, propid=None, expJson= '{}', client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
@@ -78,7 +78,7 @@ class SCMetrics:
             )
         return res
 
-    def getModuleTSMetrics(self, org, pid, expJson, propid=None, client=None):
+    def getModuleTSMetrics(self, org, pid, propid=None, expJson= '{}', client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
