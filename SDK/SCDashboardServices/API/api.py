@@ -56,7 +56,7 @@ class SCDashboard:
         except Exception as e:
             print("Exception " + str(e))
 
-    def getWidgetImage(self, org, pid, expJson, propid=None, client=None):
+    def getWidgetImage(self, org, pid, propid=None, expJson= '{}', client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
