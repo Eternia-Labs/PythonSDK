@@ -8,7 +8,7 @@ import os
 import hmac, hashlib, time
 import yaml, jmespath
 
-AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
+# AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 
 signing_status = "SIGNING_STATUS_PYTHONSDK"
 
