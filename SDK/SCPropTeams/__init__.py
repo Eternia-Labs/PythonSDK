@@ -1,3 +1,3 @@
 from .API import *
 
-print("DEBUG: Imported SCGridsServices.")
+print("DEBUG: Imported SCPropTeamsServices.")
