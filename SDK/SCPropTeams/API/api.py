@@ -52,7 +52,7 @@ class SCPropTeams:
 
     def getMemberGroup(self, org, pid, propid, client=None):
         """
-        Gets list of all Properties
+        Retrieving member groups for property along with member group id and name mapping.
 
         :param org:
         :param pid:
