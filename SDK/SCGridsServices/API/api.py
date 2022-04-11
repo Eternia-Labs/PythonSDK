@@ -3,12 +3,11 @@ from SDK.ClientAsync import clientasync
 import json
 import tornado.ioloop
 import os
+from urllib.request import urlopen
 
 HOST = "SC_GRIDS_HOST"
 PROTOCOL = "SC_GRIDS_HTTP_PROTOCOL"
 PORT = "SC_GRIDS_PORT"
-apiversion = "v1"
-
 
 # TODO:
 #  1. Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
@@ -21,39 +20,47 @@ class SCGrids:
 
     def initialize(self):
         try:
+            url = "https://www.smartclean.io/matrix/utils/modules/moduleversions.json"
+            response = urlopen(url)
+            data_json = json.loads(response.read())
+            apiversion = data_json["modules"]["scgrids"]["version"]
+            base = data_json["base"]
+
             if os.getenv(HOST):
                 uri = os.getenv(HOST)
             else:
-                uri = "console.smartclean.io/api/scgrids"
+                uri = f"{base}/scgrids"
                 print("SCGRIDS: Host is not set")
+
             if os.getenv(PROTOCOL):
                 prefix = os.getenv(PROTOCOL)
             else:
                 prefix = "https"
                 print("SCGRIDS: protocol env variable is not set")
+
             if os.getenv(PORT):
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, port, service="SCGrids"
+                    prefix, uri, apiversion, port, service="scgrids"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, port, service="SCGrids"
+                    prefix, uri, apiversion, port, service="scgrids"
                 )
 
             else:
                 print("SCGRIDS: Port is not set")
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, service="SCGrids"
+                    prefix, uri, apiversion, service="scgrids"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, service="SCGrids"
+                    prefix, uri, apiversion, service="scgrids"
                 )
 
         except Exception as e:
             print("Exception " + str(e))
-
-    def listProperties(self, org, pid, client=None):
+            
+    def listProperties(self, org, pid, propid=None, client=None):
         """
         Gets list of all Properties
 
@@ -64,11 +71,11 @@ class SCGrids:
         """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.listProperties", org=org, pid=pid
+                httpmethod="POST", op="scgrids.listProperties", org=org, pid=pid, propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.listProperties", org=org, pid=pid
+                httpmethod="POST", op="scgrids.listProperties", org=org, pid=pid, propid=propid,
             )
         return res
 
@@ -131,7 +138,7 @@ class SCGrids:
     # endregion
 
     # region Requests for Building (pid is required in query params)
-    def readBuilding(self, org, pid, client=None):
+    def readBuilding(self, org, pid, propid=None, client=None):
         """
         Get details of Building
 
@@ -142,15 +149,15 @@ class SCGrids:
         """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.readBuilding", org=org, pid=pid
+                httpmethod="POST", op="scgrids.readBuilding", org=org, pid=pid, propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.readBuilding", org=org, pid=pid
+                httpmethod="POST", op="scgrids.readBuilding", org=org, pid=pid, propid=propid,
             )
         return res
 
-    def listLevelsByBuilding(self, org, pid, client=None):
+    def listLevelsByBuilding(self, org, pid, propid=None, client=None):
         """
         Get list of all Levels in Building
 
@@ -161,15 +168,15 @@ class SCGrids:
         """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid
+                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid, propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid
+                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid, propid=propid,
             )
         return res
 
-    def buildingZoneMap(self, org, pid, expJson, client=None):
+    def buildingZoneMap(self, org, pid, propid=None, expJson= '{}', client=None):
         """
         Get Zone map in Building
 
@@ -186,6 +193,7 @@ class SCGrids:
                 op="scgrids.buildingZoneMap",
                 org=org,
                 pid=pid,
+                propid=propid,
                 body=json.loads(expJson),
             )
         else:
@@ -194,11 +202,12 @@ class SCGrids:
                 op="scgrids.buildingZoneMap",
                 org=org,
                 pid=pid,
+                propid=propid,
                 body=json.loads(expJson),
             )
         return res
 
-    def listBuildingMetrics(self, org, pid, client=None):
+    def listBuildingMetrics(self, org, pid, propid=None, client=None):
         """
         Gets all metrics (eg count of members) for Building
 
@@ -209,17 +218,17 @@ class SCGrids:
         """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid
+                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid, propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid
+                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid, propid=propid,
             )
         return res
     # endregion
 
     # region Requests for Level (LID is required in data)
-    def listZonesByLevel(self, org, pid, expJson, client=None):
+    def listZonesByLevel(self, org, pid, propid=None, expJson= '{}', client=None):
         """
         Gets list of all Zones in Level
 
@@ -235,6 +244,7 @@ class SCGrids:
                 op="scgrids.listZonesByLevel",
                 org=org,
                 pid=pid,
+                propid=propid,
                 body=json.loads(expJson),
             )
         else:
@@ -243,13 +253,14 @@ class SCGrids:
                 op="scgrids.listZonesByLevel",
                 org=org,
                 pid=pid,
+                propid=propid,
                 body=json.loads(expJson),
             )
         return res
     # endregion
 
     # region Requests for Zone (InsID is required in data)
-    def read_zone(self, org: str, pid: str, exp_json: str, client=None) -> any:
+    def read_zone(self, org: str, pid: str, propid=None, expJson= '{}', client=None) -> any:
         """
         Gets details of Zone
 
@@ -273,7 +284,8 @@ class SCGrids:
             "op": _op,
             "org": org,
             "pid": pid,
-            "body": json.loads(exp_json),
+            "propid": propid,
+            "body": json.loads(expJson),
         }
 
         res = _client_obj.makeRequest(**request_kwargs)

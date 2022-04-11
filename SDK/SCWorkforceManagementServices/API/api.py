@@ -3,12 +3,11 @@ from SDK.ClientAsync import clientasync
 import json
 import tornado.ioloop
 import os
+from urllib.request import urlopen
 
 HOST = "SC_WORKFORCEMANAGEMENT_HOST"
 PROTOCOL = "SC_WORKFORCEMANAGEMENT_HTTP_PROTOCOL"
 PORT = "SC_WORKFORCEMANAGEMENT_PORT"
-apiversion = "v1"
-
 
 class SCWorkforcemanagement:
     def __init__(self):
@@ -28,27 +27,33 @@ class SCWorkforcemanagement:
             else:
                 prefix = "https"
                 print("SCWORKFORCEMANAGEMENT: protocol env variable is not set")
+
+            url = "https://www.smartclean.io/matrix/utils/modules/moduleversions.json"
+            response = urlopen(url)
+            data_json = json.loads(response.read())
+            apiversion = data_json["modules"]["scworkforcemanagement"]["version"]
+
             if os.getenv(PORT):
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, port, service="SCWorkforceManagement"
+                    prefix, uri, apiversion, port, service="scworkforcemanagement"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, port, service="SCWorkforceManagement"
+                    prefix, uri, apiversion, port, service="scworkforcemanagement"
                 )
             else:
                 print("SCWORKFORCEMANAGEMENT: Port is not set")
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion, service="SCWorkforceManagement"
+                    prefix, uri, apiversion, service="scworkforcemanagement"
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion, service="SCWorkforceManagement"
+                    prefix, uri, apiversion, service="scworkforcemanagement"
                 )
         except Exception as e:
             print("Exception " + str(e))
 
-    def createIncidentWithoutAssignee(self, org, propid, pid, expJson, client=None):
+    def createIncidentWithoutAssignee(self, org, pid, propid, expJson, client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
@@ -69,7 +74,7 @@ class SCWorkforcemanagement:
             )
         return res
 
-    def getTaskGroupInTRangeForID(self, org, pid, expJson, client=None):
+    def getTaskGroupInTRangeForID(self, org, pid, propid=None, expJson= '{}', client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
@@ -77,6 +82,7 @@ class SCWorkforcemanagement:
                 body=json.loads(expJson),
                 org=org,
                 pid=pid,
+                propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
@@ -85,6 +91,7 @@ class SCWorkforcemanagement:
                 body=json.loads(expJson),
                 org=org,
                 pid=pid,
+                propid=propid,
             )
         return res
 
@@ -111,32 +118,9 @@ class SCWorkforcemanagement:
             )
         return res
 
-    def getShiftDefinitionForProperty(
-        self, org, pid, propid, expJson, client=None
-    ):
-        if client == "Sync":
-            res = self.Sync_client.makeRequest(
-                httpmethod="POST",
-                op="scteams.getShiftDefinitionForProperty",
-                body=json.loads(expJson),
-                org=org,
-                pid=pid,
-                propid=propid,
-            )
-        else:
-            res = self.Async_client.makeRequest(
-                httpmethod="POST",
-                op="scteams.getShiftDefinitionForProperty",
-                body=json.loads(expJson),
-                org=org,
-                pid=pid,
-                propid=propid,
-            )
-        return res
-
     # TODO: Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
     def find_availability_for_incident(
-        self, org: str, prop_id: str, pid: str, exp_json: str, client=None
+        self, org, pid, propid, expJson, client=None
     ) -> any:
         """
         This returns availability response for incident
@@ -160,17 +144,19 @@ class SCWorkforcemanagement:
         request_kwargs = {
             "httpmethod": _method,
             "op": _op,
-            "propid": prop_id,
+            "propid": propid,
             "org": org,
             "pid": pid,
-            "body": json.loads(exp_json),
+            "body": json.loads(expJson),
         }
 
         res = _client_obj.makeRequest(**request_kwargs)
         return res
 
     # TODO: Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
-    def assign_shift_to_incident(self, org: str, prop_id: str, pid: str, exp_json: str, client = None) -> any:
+    def assign_shift_to_incident(
+        self, org, pid, propid, expJson, client=None
+    ) -> any:
         """
         This returns availability response for incident
 
@@ -182,21 +168,21 @@ class SCWorkforcemanagement:
         :return: Response to HTTP Request
         """
 
-        if client == 'Sync':
+        if client == "Sync":
             _client_obj = self.Sync_client
         else:
             _client_obj = self.Async_client
 
-        _method = 'POST'
-        _op = 'scteams.assignIncident'
+        _method = "POST"
+        _op = "scteams.assignIncident"
 
         request_kwargs = {
-            'httpmethod': _method,
-            'op': _op,
-            'propid': prop_id,
-            'org': org,
-            'pid': pid,
-            'body': json.loads(exp_json)
+            "httpmethod": _method,
+            "op": _op,
+            "propid": propid,
+            "org": org,
+            "pid": pid,
+            "body": json.loads(expJson),
         }
 
         res = _client_obj.makeRequest(**request_kwargs)
