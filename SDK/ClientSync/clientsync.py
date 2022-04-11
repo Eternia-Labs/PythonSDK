@@ -11,7 +11,7 @@ import jmespath
 signing_status = "SIGNING_STATUS_PYTHONSDK"
 
 if not os.getenv(signing_status):
-    signing = "Disabled"
+    signing = "Enabled"
 else:
     signing = os.getenv(signing_status)
 
