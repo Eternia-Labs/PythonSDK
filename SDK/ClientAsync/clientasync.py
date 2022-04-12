@@ -52,9 +52,9 @@ class ClientV1:
         self.secret_key = None
         self.access_key = None
         print("Message from Async Client:")
-        print(
-            "Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'."
-        )
+        # print(
+        #     "Signing is not enabled. You can enable by setting the environment variables: 'SIGNING_STATUS_PYTHONSDK', 'USER_NAME_PYTHONSDK' and 'PASSWORD_PYTHONSDK'."
+        # )
 
     def initializeForService(
         self, prefix, uri, apiversion, port=None, service="scgrids"
@@ -132,7 +132,8 @@ class ClientV1:
             dirname = os.path.dirname(__file__).split("/")[0]
             dirname = os.path.join(dirname, "sc-tenants.yml")
             a_yaml_file = open(dirname)
-            parsed_yaml_file = yaml.load(a_yaml_file)
+            # parsed_yaml_file = yaml.load(a_yaml_file)
+            parsed_yaml_file = yaml.safe_load(a_yaml_file)
             if propid not in parsed_yaml_file["tenants"]:
                 return {"code": "failure", "error": "No such property with the provided propid exists in the sc-tenants.yml file."}
 
