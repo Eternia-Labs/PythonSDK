@@ -122,7 +122,8 @@ class ClientV1:
             dirname = os.path.dirname(__file__).split("/")[0]
             dirname = os.path.join(dirname, "sc-tenants.yml")
             a_yaml_file = open(dirname)
-            parsed_yaml_file = yaml.load(a_yaml_file)
+            # parsed_yaml_file = yaml.load(a_yaml_file)
+            parsed_yaml_file = yaml.safe_load(a_yaml_file)
             if propid not in parsed_yaml_file["tenants"]:
                 return {"code": "failure", "error": "No such property with the provided propid exists in the sc-tenants.yml file."}
             
