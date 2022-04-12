@@ -530,7 +530,7 @@ def load_env_vars(load_from_dotenv_file: bool = False, dotenv_filepath: str = No
         os.environ['SC_DEVICE_MANAGEMENT_PORT'] = ''
 
 
-def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
+def test_op_in_service(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
 
     if LOAD_ENV_VARS is True:
         load_env_vars(load_from_dotenv_file=True)
@@ -560,6 +560,12 @@ def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: s
         raise Exception('Test Requests for service not yet added')
 
     handle_response(response)
+
+
+def test_sdk_utils():
+
+    from test import sdk_utils
+    sdk_utils.test_utils()
 
 
 def handle_response(test_response: dict):
@@ -1258,7 +1264,13 @@ def parse_sdk_response(client_type: str, sdk_response: any):
 
 
 if __name__ == "__main__":
-    run_test(
+
+    test_sdk_utils()
+
+    print('Waiting 2 seconds before running next test')
+    time.sleep(2)
+
+    test_op_in_service(
         service=SERVICE_ID_DEVICE_MANAGEMENT,
         op=device_management.OP_REALSENSE_MIGRATED,
         return_mock=False
