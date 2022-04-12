@@ -1,3 +1,4 @@
+import sys
 import time
 import json
 import os
@@ -546,17 +547,51 @@ def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: s
     client = CLIENT_TYPE_ASYNC
 
     if service == device_management.SERVICE_ID:
-        test_device_management_api(op, org, pid, client, return_mock)
+        response = test_device_management_api(op, org, prop_id, pid, client, return_mock)
     elif service == grids.SERVICE_ID:
-        test_grids_api(op, org, pid, client, return_mock)
+        response = test_grids_api(op, org, pid, client, return_mock)
     elif service == workforce_management.SERVICE_ID:
-        test_workforce_apis(op, org, pid, client, return_mock)
+        response = test_workforce_apis(op, org, pid, client, return_mock)
     elif service == sms_gateway.SERVICE_ID:
-        test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
+        response = test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
     elif service == partners_solutions.SERVICE_ID:
-        test_partners_solutions_op(op, org, prop_id, client, return_mock)
+        response = test_partners_solutions_op(op, org, prop_id, client, return_mock)
     else:
         raise Exception('Test Requests for service not yet added')
+
+    handle_response(response)
+
+
+def handle_response(test_response: dict):
+    # eg1 = {'code': 'failure', 'error': '[Errno 61] Connection refused'}
+    # eg2 = {
+    #  'code': 'failure',
+    #  'error': 'No such property with the provided propid exists in the '
+    #           'sc-tenants.yml file.'}
+    # eg3 = {'code': 'failure', 'error': '[Errno 54] Connection reset by peer'}
+    # eg4 = {'code': 'failure',
+    #        'error': {'code': 'INVALID_BUILDING',
+    #                  'message': 'The building id you specified is incorrect or not a '
+    #                             'part of the property you are accessing.'}}
+
+    # eg5= {
+    #     'code': 'failure',
+    #     'error': {'code': 'MISSING_TIME',
+    #               'message': 'HMAC auth requires you to supply the time in header '
+    #                          'x-sc-time.'}
+    # }
+
+    if 'error' in test_response and test_response['error']:
+        print(f'Error in response is:{test_response["error"]}')
+
+    if 'message' in test_response and test_response['message']:
+        print(f'message in response is:\n{test_response["message"]}')
+
+    if 'code' in test_response and test_response['code']:
+        if test_response['code'] == 'failure':
+            print(f'Code in response is: {test_response["code"]}', file=sys.stderr)
+        else:
+            print(f'Code in response is: {test_response["code"]}')
 
 
 TEST_DEVICE_ALIAS_ID = 'TestDeviceAlias'
@@ -741,7 +776,7 @@ MOCK_RESPONSE_SEND_SMS = {
 
 
 # region Test desired Op in desired Service
-def test_device_management_api(op: str, org: str, pid: str, client: str, return_mock: bool = True):
+def test_device_management_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
@@ -753,7 +788,7 @@ def test_device_management_api(op: str, org: str, pid: str, client: str, return_
 
         if mock_response is None:
             raise Exception(f'Failed to create mock response ({mock_response_status})')
-        response_content = mock_response
+        response = mock_response
     else:
 
         from SDK.SCDeviceManagement.API import SCDeviceManagement
@@ -761,11 +796,11 @@ def test_device_management_api(op: str, org: str, pid: str, client: str, return_
         scdevicemanagement = SCDeviceManagement()
         print("SCDeviceManagement instantiated.")
 
-        test_client = TEST_CLIENT
+        test_client = CLIENT_TYPE_ASYNC
 
         if op == 'realSenseMigrated':
             response = scdevicemanagement.realSenseMigrated(
-                org, pid, test_client)
+                org, pid, prop_id, test_client)
 
             print(f'{op} request complete. Response is:')
             print(response)
@@ -776,7 +811,7 @@ def test_device_management_api(op: str, org: str, pid: str, client: str, return_
             }
 
             response = scdevicemanagement.getDeviceSlots(
-                org, pid, json.dumps(request_body), test_client
+                org, pid, prop_id, json.dumps(request_body), test_client
             )
 
             print("getDeviceSlots request. Response is:")
@@ -787,34 +822,36 @@ def test_device_management_api(op: str, org: str, pid: str, client: str, return_
         )
 
         # region Parse response based on type of client
-        if test_client == CLIENT_TYPE_ASYNC:
-            response_content = response
-            print("Obtained response")
-        else:
-            status_code = response.status_code
-            print(f"Status code in this response is: {status_code}")
-            response_content = response.json()
-            print("Obtained .json() from response.")
+        # if test_client == CLIENT_TYPE_ASYNC:
+        #     response_content = response
+        #     print("Obtained response")
+        # else:
+        #     status_code = response.status_code
+        #     print(f"Status code in this response is: {status_code}")
+        #     response_content = response.json()
+        #     print("Obtained .json() from response.")
         # endregion
 
     print("Type of response content is:")
-    type_response = type(response_content)
+    type_response = type(response)
     print(type_response)
 
-    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
-        _status_text = "Error in HTTP Request by sc-python-sdk"
-        _err_text = response_content.message
-        _status_code = response_content.code
-        return_text = f"{_status_text}: code: {_status_code}| message: {_err_text}"
-        print(return_text)
-        return
+    # if type_response is HTTPClientError or type_response is HTTPTimeoutError:
+    #     _status_text = "Error in HTTP Request by sc-python-sdk"
+    #     _err_text = response_content.message
+    #     _status_code = response_content.code
+    #     return_text = f"{_status_text}: code: {_status_code}| message: {_err_text}"
+    #     print(return_text)
+    #     return
     # Example of error response:
     # Error in HTTP Request by sc-python-sdk: code: 400| message: Bad Request
     print("Keys in Response content is:")
-    print(list(response_content.keys()))
+    print(list(response.keys()))
 
     print('Response content is:')
-    print(pformat(response_content))
+    print(pformat(response))
+
+    return response
 
 
 def test_grids_api(op: str, org: str, pid: str, client: str, return_mock: bool = True):
@@ -888,6 +925,8 @@ def test_grids_api(op: str, org: str, pid: str, client: str, return_mock: bool =
         desired_data = response_content["data"]
         print('Extracted "data" from response. Data is:')
         print(pformat(desired_data))
+
+    return response_content
 
 
 def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: bool = True):
@@ -1001,6 +1040,8 @@ def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: b
     print('Response content is:')
     print(pformat(response_content))
 
+    return response_content
+
 
 def test_sms_gateway_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
@@ -1074,6 +1115,7 @@ def test_sms_gateway_apis(op: str, org: str, prop_id: str, pid: str, client: str
 
     print('Response content is:')
     print(pformat(response_content))
+    return response_content
 
 
 def test_partners_solutions_op(op: str, org: str, prop_id: str, client: str, return_mock: bool = True):
@@ -1171,6 +1213,7 @@ def test_partners_solutions_op(op: str, org: str, prop_id: str, client: str, ret
 
     print('Response content is:')
     print(pformat(response_content))
+    return response_content
 # endregion
 
 
@@ -1216,7 +1259,7 @@ def parse_sdk_response(client_type: str, sdk_response: any):
 
 if __name__ == "__main__":
     run_test(
-        service=SERVICE_ID_PARTNERS_SOLUTIONS,
-        op=partners_solutions.OP_ADD_SOLUTION_TO_PROPERTY,
-        return_mock=True
+        service=SERVICE_ID_DEVICE_MANAGEMENT,
+        op=device_management.OP_REALSENSE_MIGRATED,
+        return_mock=False
     )
