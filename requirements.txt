@@ -7,3 +7,4 @@ PyYAML==5.3
 requests==2.25.1
 tornado==6.1
 urllib3==1.26.4
+pycurl==7.43.0.6 --global-option="--with-openssl"
