@@ -530,7 +530,7 @@ def load_env_vars(load_from_dotenv_file: bool = False, dotenv_filepath: str = No
         os.environ['SC_DEVICE_MANAGEMENT_PORT'] = ''
 
 
-def test_op_in_service(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
+def test_op_in_service(service: str, op: str, org: str = None, pid: str = None, return_mock: bool = True):
 
     if LOAD_ENV_VARS is True:
         load_env_vars(load_from_dotenv_file=True)
@@ -541,8 +541,16 @@ def test_op_in_service(service: str, op: str, org: str = None, prop_id: str = No
     if pid is None:
         pid = os.environ['TEST_PID']
 
-    if prop_id is None:
-        prop_id = os.environ['TEST_PROP_ID']
+    prop_id = os.environ['TEST_PROP_ID']
+    access_key_for_prop = os.environ['SC_ACCESS_KEY']
+    secret_key_for_prop = os.environ['SC_SECRET_KEY']
+
+    from SDK import utils
+    response = utils.register_credentials_for_property(prop_id, access_key_for_prop, secret_key_for_prop)
+    print(f'Register credentials response is:\n{pformat(response)}')
+
+    if response['success'] is False:
+        raise Exception('Register credentials failed.')
 
     client = CLIENT_TYPE_ASYNC
 
@@ -1265,10 +1273,10 @@ def parse_sdk_response(client_type: str, sdk_response: any):
 
 if __name__ == "__main__":
 
-    test_sdk_utils()
+    # test_sdk_utils()
 
-    print('\nWaiting 2 seconds before running next test')
-    time.sleep(2)
+    # print('\nWaiting 2 seconds before running next test')
+    # time.sleep(2)
 
     test_op_in_service(
         service=SERVICE_ID_DEVICE_MANAGEMENT,
