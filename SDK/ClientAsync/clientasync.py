@@ -129,11 +129,26 @@ class ClientV1:
 
             self.etime = str(int(time.time()))
 
-            dirname = os.path.dirname(__file__).split("/")[0]
-            dirname = os.path.join(dirname, "sc-tenants.yml")
-            a_yaml_file = open(dirname)
+            # dirname = os.path.dirname(__file__).split("/")[0]
+            # dirname = os.path.join(dirname, "sc-tenants.yml")
+            # a_yaml_file = open(dirname)
             # parsed_yaml_file = yaml.load(a_yaml_file)
-            parsed_yaml_file = yaml.safe_load(a_yaml_file)
+            # parsed_yaml_file = yaml.safe_load(a_yaml_file)
+
+            # region Create absolute path to sc-tenants file
+            _absolute_path_sdk_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            print(f'Path to SDK directory is:\n{_absolute_path_sdk_directory}')
+            absolute_path_tenants_file = f'{_absolute_path_sdk_directory}/sc-tenants.yml'
+            print(f'Path to sc-tenants file is:\n{absolute_path_tenants_file}')
+            # endregion
+
+            if not os.path.isfile(absolute_path_tenants_file):
+                return {"code": "failure", "error": "sc-tenants file not found."}
+
+            with open(absolute_path_tenants_file, mode='r') as _file_stream:
+                parsed_yaml_file = yaml.safe_load(_file_stream)
+                print('Loaded data from sc-tenants file')
+
             if propid not in parsed_yaml_file["tenants"]:
                 return {"code": "failure", "error": "No such property with the provided propid exists in the sc-tenants.yml file."}
 
