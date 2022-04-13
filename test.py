@@ -1267,7 +1267,7 @@ if __name__ == "__main__":
 
     test_sdk_utils()
 
-    print('Waiting 2 seconds before running next test')
+    print('\nWaiting 2 seconds before running next test')
     time.sleep(2)
 
     test_op_in_service(
