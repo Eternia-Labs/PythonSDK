@@ -24,6 +24,14 @@ def register_credentials_for_property(property_id: str, access_key: str, secret_
         with open(absolute_path_tenants_file, mode='r') as _file_stream:
             sc_tenants_data = yaml.safe_load(_file_stream)
             print('Loaded data from sc-tenants file')
+
+        if sc_tenants_data is None:
+            print('No data in sc-tenants file, created desired blank template.')
+            sc_tenants_data = {'tenants': {}}
+
+        if 'tenants' not in sc_tenants_data:
+            print('Desired key: tenants missing in sc-tenants file. Created the desired template with key.')
+            sc_tenants_data.update({'tenants': {}})
     else:
         # Start with desired template data
         sc_tenants_data = {'tenants': {}}
@@ -71,6 +79,14 @@ def deregister_credentials_for_property(property_id: str) -> dict:
     with open(absolute_path_tenants_file, mode='r') as _file_stream:
         sc_tenants_data = yaml.safe_load(_file_stream)
         print('Loaded data from sc-tenants file')
+
+    if sc_tenants_data is None:
+        response_data['text'] = 'Cannot find credentials in sc-tenants file (No data in file)'
+        return response_data
+
+    if 'tenants' not in sc_tenants_data:
+        response_data['text'] = 'Cannot find credentials in sc-tenants file (Required key: "tenants" missing in file)'
+        return response_data
 
     try:
         sc_tenants_data['tenants'].pop(property_id)
