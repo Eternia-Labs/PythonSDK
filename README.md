@@ -39,8 +39,20 @@ import json
 tasks = SCGrids()
 
 
-tasks.listZonesByLevel(ORG,PID,jsondata) 
+tasks.listZonesByLevel(ORG,PID,jsondata)
 
+#### HMAC Signed Async Requests (Signing Enabled)
+1. Ensure pycurl (version: 7.43.0.6) is installed with the global option (with-openssl)
+- If not, run the following command in the project environment:
+`pip install pycurl==7.43.0.6 --global-option="--with-openssl"`
+2. Ensure CurlAsyncHTTPClient is used for the tornado AsyncHTTPClient 
+- In SDK/ClientAsync/clientasync.py, the following line must be available and not commented:
+`AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")`
+- Note When Signing is disabled this may cause some problems (so this is strictly for usage with Signing enabled)
+3. Ensure Signing is enabled
+- Environment variable SIGNING_STATUS_PYTHONSDK must be set to "Enabled")
+4. Ensure credentials (Access Key and Secret Key) are registered for desired Property
+- By manually updating the sc-tenants.yml file. Add the Access Key and Secret Key for desired PropertyID.
 
 #### Sample:
 
@@ -75,7 +87,7 @@ Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId)
 ##### For json data:
 print(Property)
 
-#### For using it locally:
+[comment]: <> (#### For using it locally:)
 
 ##### Set the environment variables for the corresponding service:
 
@@ -106,10 +118,12 @@ print(Property)
 
 ###### PROTOCOL is http or https.
 
-#### For not using it locally:
+[comment]: <> (#### For not using it locally:)
 
-Signing is not enabled. It is "Disabled" by default. You can enable it by setting the environment variables.
+[comment]: <> (Signing is not enabled. It is "Disabled" by default. You can enable it by setting the environment variables.)
 
-'SIGNING_STATUS_PYTHONSDK' ("Enabled")
-'USER_NAME_PYTHONSDK' (<user_name>)
-'PASSWORD_PYTHONSDK' (<password>)
+[comment]: <> ('SIGNING_STATUS_PYTHONSDK' &#40;"Enabled"&#41;)
+
+[comment]: <> ('USER_NAME_PYTHONSDK' &#40;<user_name>&#41;)
+
+[comment]: <> ('PASSWORD_PYTHONSDK' &#40;<password>&#41;)
