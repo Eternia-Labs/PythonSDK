@@ -211,7 +211,31 @@ class ClientV1:
             except HTTPClientError as e:
                 _err_text = str(e)
                 print("inside exception HTTPClientError", _err_text)
-                return {"code": "failure", "error": _err_text}
+
+                if not e.response:
+                    print('HTTPResponse object not available in HTTPClientError object.')
+                    return {"code": "failure", "error": _err_text}
+
+                response_headers = e.response.headers
+                print(f'Response headers are:\n{response_headers}')
+
+                http_response_object = e.response
+
+                if not http_response_object.body:
+                    print('No data in body of this HTTPResponse object')
+                    return {"code": "failure", "error": _err_text}
+
+                decoded_response_body = http_response_object.body.decode('utf-8')
+
+                if 'Content-Type' in response_headers and response_headers['Content-Type'] == 'application/json':
+                    response_data = json.loads(decoded_response_body)
+                else:
+                    response_data = decoded_response_body
+
+                print(f'Data in body of response is:\n{response_data}')
+
+                return {"code": "failure", "error": response_data}
+
             except Exception as e:
                 print("inside exception", str(e))
                 return {"code": "failure", "error": f"{e}"}
