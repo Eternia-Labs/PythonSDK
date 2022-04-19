@@ -209,9 +209,9 @@ class ClientV1:
                 response = await self.session.fetch(req)
                 # print(json.loads(response.body))
             except HTTPClientError as e:
-                print("inside exception HTTPClientError", str(e))
-                error = json.loads(e.response.body.decode("utf8"))
-                return {"code": "failure", "error": error}
+                _err_text = str(e)
+                print("inside exception HTTPClientError", _err_text)
+                return {"code": "failure", "error": _err_text}
             except Exception as e:
                 print("inside exception", str(e))
                 return {"code": "failure", "error": f"{e}"}
