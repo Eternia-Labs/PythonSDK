@@ -40,6 +40,7 @@ SERVICE_ID_WORKFORCE_MANAGEMENT = workforce_management.SERVICE_ID
 WORKFORCE_MGMT_OP_ASSIGN_INCIDENT = workforce_management.OP_ASSIGN_INCIDENT
 WORKFORCE_MGMT_OP_FIND_AVAILABILITY = workforce_management.OP_FIND_AVAILABILITY
 WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = workforce_management.OP_CREATE_INCIDENT_NO_ASSIGNEE
+WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS = workforce_management.OP_GET_INCIDENT_SETTINGS
 # endregion
 
 # region SCSMSGateway
@@ -320,6 +321,73 @@ def test_create_incident_without_assignee(
         print(pformat(desired_data))
 
 
+def test_get_incident_settings(
+    org: str = None,
+    pid: str = None,
+    prop_id: str = None,
+    test_client=CLIENT_TYPE_ASYNC,
+):
+
+    print("Starting test for get incident settings...")
+
+    if org is None:
+        org = os.environ["TEST_ORG"]
+
+    if pid is None:
+        pid = os.environ["TEST_PID"]
+
+    if prop_id is None:
+        prop_id = os.environ["TEST_PROP_ID"]
+
+    from SDK.SCWorkforceManagementServices.API import SCWorkforcemanagement
+
+    print("SCWorkforcemanagement imported from respective service directory.")
+    scworkforcemanagement = SCWorkforcemanagement()
+    print("SCWorkforcemanagement instantiated.")
+
+    get_incident_settings_resp = scworkforcemanagement.get_incident_settings(
+        org, pid, prop_id, test_client
+    )
+
+    print("Get incident settings request complete. Response is:")
+    print(get_incident_settings_resp)
+
+    print(
+        f"{test_client} client was used for this request. Response will be parsed accordingly."
+    )
+
+    # region Parse response based on type of client
+    if test_client == CLIENT_TYPE_ASYNC:
+        response_content = get_incident_settings_resp
+        print("Obtained response")
+    else:
+        status_code = get_incident_settings_resp.status_code
+        print(f"Status code in this response is: {status_code}")
+        response_content = get_incident_settings_resp.json()
+        print("Obtained .json() from response.")
+    # endregion
+
+    print("Type of response content is:")
+    type_response = type(response_content)
+    print(type_response)
+
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
+        _status_text = "Error in HTTP Request by sc-python-sdk"
+        _err_text = response_content.message
+        _status_code = response_content.code
+        return_text = f"{_status_text}: code: {_status_code}| message: {_err_text}"
+        print(return_text)
+        return
+
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
+
+    if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
+        desired_data = response_content["data"]
+        print('Extracted "data" from response. Data is:')
+        print(pformat(desired_data))
+
+
 def test_find_availability_for_incident(
     org: str = None,
     pid: str = None,
@@ -559,13 +627,15 @@ def test_op_in_service(service: str, op: str, org: str = None, pid: str = None, 
     elif service == grids.SERVICE_ID:
         response = test_grids_api(op, org, pid, client, return_mock)
     elif service == workforce_management.SERVICE_ID:
-        response = test_workforce_apis(op, org, pid, client, return_mock)
+        response = test_workforce_apis(op, org, pid, prop_id, client, return_mock)
     elif service == sms_gateway.SERVICE_ID:
         response = test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
     elif service == partners_solutions.SERVICE_ID:
         response = test_partners_solutions_op(op, org, prop_id, client, return_mock)
     else:
         raise Exception('Test Requests for service not yet added')
+
+    utils.deregister_credentials_for_property(property_id=prop_id)
 
     handle_response(response)
 
@@ -943,7 +1013,7 @@ def test_grids_api(op: str, org: str, pid: str, client: str, return_mock: bool =
     return response_content
 
 
-def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: bool = True):
+def test_workforce_apis(op: str, org: str, pid: str, prop_id: str, client: str, return_mock: bool = True):
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -973,7 +1043,7 @@ def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: b
         test_client = TEST_CLIENT
 
         zone_id = os.environ["TEST_ZONE_ID"]
-        prop_id = os.environ['TEST_PROP_ID']
+        # prop_id = os.environ['TEST_PROP_ID']
         if op == WORKFORCE_MGMT_OP_FIND_AVAILABILITY:
             curr_unix_time = int(time.time())
             end_unix_time = (
@@ -1005,6 +1075,10 @@ def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: b
             response = scworkforcemanagement.createIncidentWithoutAssignee(
                 org, prop_id, pid, json.dumps(request_body), test_client
             )
+        elif op == WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS:
+
+            response = scworkforcemanagement.get_incident_settings(
+                org, pid, prop_id, test_client)
         else:
             seat_id = os.environ['TEST_SEAT_ID']
             shift_id = os.environ['TEST_SHIFT_ID']
@@ -1279,7 +1353,7 @@ if __name__ == "__main__":
     # time.sleep(2)
 
     test_op_in_service(
-        service=SERVICE_ID_DEVICE_MANAGEMENT,
-        op=device_management.OP_REALSENSE_MIGRATED,
-        return_mock=False
+        service=SERVICE_ID_WORKFORCE_MANAGEMENT,
+        op=WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS,
+        return_mock=True
     )
