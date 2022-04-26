@@ -4,10 +4,12 @@ import json
 import tornado.ioloop
 import os
 from urllib.request import urlopen
+from pprint import pformat
 
 HOST = "SC_WORKFORCEMANAGEMENT_HOST"
 PROTOCOL = "SC_WORKFORCEMANAGEMENT_HTTP_PROTOCOL"
 PORT = "SC_WORKFORCEMANAGEMENT_PORT"
+
 
 class SCWorkforcemanagement:
     def __init__(self):
@@ -186,4 +188,27 @@ class SCWorkforcemanagement:
         }
 
         res = _client_obj.makeRequest(**request_kwargs)
+        return res
+
+    def get_incident_settings(self, org, pid, propid, client=None):
+
+        print('In API / get incident settings:')
+        _function_args = locals()
+        print(f'Args given are: \n{pformat(_function_args)}')
+
+        op = 'scteams.getIncidentsSettings'
+
+        _args_for_function = {
+            'httpmethod': 'POST',
+            'op': op,
+            'propid': propid,
+            'org': org,
+            'pid': pid
+        }
+
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(**_args_for_function)
+        else:
+            res = self.Async_client.makeRequest(**_args_for_function)
+
         return res
