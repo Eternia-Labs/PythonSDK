@@ -39,6 +39,7 @@ SERVICE_ID_WORKFORCE_MANAGEMENT = workforce_management.SERVICE_ID
 WORKFORCE_MGMT_OP_ASSIGN_INCIDENT = workforce_management.OP_ASSIGN_INCIDENT
 WORKFORCE_MGMT_OP_FIND_AVAILABILITY = workforce_management.OP_FIND_AVAILABILITY
 WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = workforce_management.OP_CREATE_INCIDENT_NO_ASSIGNEE
+WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS = workforce_management.OP_GET_INCIDENT_SETTINGS
 # endregion
 
 # region SCSMSGateway
@@ -950,6 +951,8 @@ def test_workforce_apis(op: str, org: str, prop_id: str, pid: str, client: str, 
             response = scworkforcemanagement.createIncidentWithoutAssignee(
                 org, pid, prop_id, json.dumps(request_body), test_client
             )
+        elif op == WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS:
+            response = scworkforcemanagement.get_incident_settings(org, pid, prop_id, test_client)
         else:
             seat_id = os.environ['TEST_SEAT_ID']
             shift_id = os.environ['TEST_SHIFT_ID']
@@ -1215,6 +1218,6 @@ def parse_sdk_response(client_type: str, sdk_response: any):
 if __name__ == "__main__":
     run_test(
         service=SERVICE_ID_WORKFORCE_MANAGEMENT,
-        op=WORKFORCE_MGMT_OP_FIND_AVAILABILITY,
+        op=WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS,
         return_mock=False
     )
