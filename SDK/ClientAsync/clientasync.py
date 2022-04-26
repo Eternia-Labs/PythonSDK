@@ -149,6 +149,13 @@ class ClientV1:
                 parsed_yaml_file = yaml.safe_load(_file_stream)
                 print('Loaded data from sc-tenants file')
 
+            # print(f'\nChecking Propid in sctenants file: {propid}')
+
+            if 'tenants' not in parsed_yaml_file:
+                return {"code": "failure", "error": "Required key: tenants not found in the sc-tenants.yml file"}
+
+            # print(f'Contents of "tenants" in sc-tenants file is: {parsed_yaml_file["tenants"]}')
+
             if propid not in parsed_yaml_file["tenants"]:
                 return {"code": "failure", "error": "No such property with the provided propid exists in the sc-tenants.yml file."}
 
