@@ -78,7 +78,7 @@ SIGNING_STATUS_PYTHONSDK="Enabled"
 
 USER_NAME_PYTHONSDK=<user_name>
 
-PASSWORD_PYTHONSDK'=<password>
+PASSWORD_PYTHONSDK=<password>
 
 # How to register and deregister credentials corresponding to properties?
 
@@ -96,17 +96,15 @@ property_id, access_key and secret_key need to be placed in the corresponding pl
 
 ## Deregister credentials for a property
 
-Deregistration of credentials for a property is done so that you can delete the credentials pertaining to a property which may no longer be used.
+Deregistration of credentials for a property is done so that you can delete the credentials pertaining to a property which may no longer be in use.
 
 ### Usage
 
 from SDK.utils import *
 
-response = register_credentials_for_property(property_id=<property_id>, access_key=<access_key>, secret_key=<secret_key>)
-
 response = deregister_credentials_for_property(property_id=<property_id>)
 
-property_id, access_key and secret_key need to be placed in the corresponding placeholders.
+property_id need to be placed in the corresponding placeholder.
 
 
 
