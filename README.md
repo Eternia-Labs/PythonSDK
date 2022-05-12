@@ -78,7 +78,7 @@ SIGNING_STATUS_PYTHONSDK="Enabled"
 
 USER_NAME_PYTHONSDK=<user_name>
 
-PASSWORD_PYTHONSDK=<password>
+PASSWORD_PYTHONSDK=<password></br>
 
 # How to register and deregister credentials corresponding to properties?
 
