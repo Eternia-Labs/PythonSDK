@@ -212,3 +212,22 @@ class SCWorkforcemanagement:
             res = self.Async_client.makeRequest(**_args_for_function)
 
         return res
+    
+    def get_incident_settings(self, org, pid, propid, client=None):
+
+        op = 'scteams.getIncidentsSettings'
+
+        _args_for_function = {
+            'httpmethod': 'POST',
+            'op': op,
+            'propid': propid,
+            'org': org,
+            'pid': pid
+        }
+
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(**_args_for_function)
+        else:
+            res = self.Async_client.makeRequest(**_args_for_function)
+
+        return res
