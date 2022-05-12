@@ -1,4 +1,3 @@
-import sys
 import time
 import json
 import os
@@ -12,7 +11,7 @@ from test import (
     sms_gateway,
     device_management,
     workforce_management,
-    partners_solutions,
+    partners_solutions
 )
 
 LOAD_ENV_VARS = True
@@ -39,9 +38,7 @@ DEVICE_MANAGEMENT_OP_GET_DEVICE_SLOTS = device_management.OP_GET_DEVICE_SLOTS
 SERVICE_ID_WORKFORCE_MANAGEMENT = workforce_management.SERVICE_ID
 WORKFORCE_MGMT_OP_ASSIGN_INCIDENT = workforce_management.OP_ASSIGN_INCIDENT
 WORKFORCE_MGMT_OP_FIND_AVAILABILITY = workforce_management.OP_FIND_AVAILABILITY
-WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = (
-    workforce_management.OP_CREATE_INCIDENT_NO_ASSIGNEE
-)
+WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = workforce_management.OP_CREATE_INCIDENT_NO_ASSIGNEE
 WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS = workforce_management.OP_GET_INCIDENT_SETTINGS
 # endregion
 
@@ -323,73 +320,6 @@ def test_create_incident_without_assignee(
         print(pformat(desired_data))
 
 
-def test_get_incident_settings(
-    org: str = None,
-    pid: str = None,
-    prop_id: str = None,
-    test_client=CLIENT_TYPE_ASYNC,
-):
-
-    print("Starting test for get incident settings...")
-
-    if org is None:
-        org = os.environ["TEST_ORG"]
-
-    if pid is None:
-        pid = os.environ["TEST_PID"]
-
-    if prop_id is None:
-        prop_id = os.environ["TEST_PROP_ID"]
-
-    from SDK.SCWorkforceManagementServices.API import SCWorkforcemanagement
-
-    print("SCWorkforcemanagement imported from respective service directory.")
-    scworkforcemanagement = SCWorkforcemanagement()
-    print("SCWorkforcemanagement instantiated.")
-
-    get_incident_settings_resp = scworkforcemanagement.get_incident_settings(
-        org, pid, prop_id, test_client
-    )
-
-    print("Get incident settings request complete. Response is:")
-    print(get_incident_settings_resp)
-
-    print(
-        f"{test_client} client was used for this request. Response will be parsed accordingly."
-    )
-
-    # region Parse response based on type of client
-    if test_client == CLIENT_TYPE_ASYNC:
-        response_content = get_incident_settings_resp
-        print("Obtained response")
-    else:
-        status_code = get_incident_settings_resp.status_code
-        print(f"Status code in this response is: {status_code}")
-        response_content = get_incident_settings_resp.json()
-        print("Obtained .json() from response.")
-    # endregion
-
-    print("Type of response content is:")
-    type_response = type(response_content)
-    print(type_response)
-
-    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
-        _status_text = "Error in HTTP Request by sc-python-sdk"
-        _err_text = response_content.message
-        _status_code = response_content.code
-        return_text = f"{_status_text}: code: {_status_code}| message: {_err_text}"
-        print(return_text)
-        return
-
-    print("Keys in Response content is:")
-    print(list(response_content.keys()))
-
-    if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
-        desired_data = response_content["data"]
-        print('Extracted "data" from response. Data is:')
-        print(pformat(desired_data))
-
-
 def test_find_availability_for_incident(
     org: str = None,
     pid: str = None,
@@ -474,67 +404,63 @@ def test_find_availability_for_incident(
 
 def test_assign_incident(test_client=CLIENT_TYPE_ASYNC, return_mock: bool = True):
 
-    print("Starting test to Assign Incident...")
+    print('Starting test to Assign Incident...')
 
     if return_mock is True:
         response_content = WORKFORCE_ASSIGN_INCIDENT_RESPONSE
     else:
-        org = os.environ["TEST_ORG"]
-        pid = os.environ["TEST_PID"]
-        prop_id = os.environ["TEST_PROP_ID"]
+        org = os.environ['TEST_ORG']
+        pid = os.environ['TEST_PID']
+        prop_id = os.environ['TEST_PROP_ID']
 
-        zone_id = os.environ["TEST_ZONE_ID"]
+        zone_id = os.environ['TEST_ZONE_ID']
 
         from SDK.SCWorkforceManagementServices.API import SCWorkforcemanagement
-
-        print("SCWorkforcemanagement imported from respective service directory.")
+        print('SCWorkforcemanagement imported from respective service directory.')
         scworkforcemanagement = SCWorkforcemanagement()
-        print("SCWorkforcemanagement instantiated.")
+        print('SCWorkforcemanagement instantiated.')
 
-        seat_id = os.environ["TEST_SEAT_ID"]
-        shift_id = os.environ["TEST_SHIFT_ID"]
-        incident_id = os.environ["TEST_INCIDENT_ID"]
+        seat_id = os.environ['TEST_SEAT_ID']
+        shift_id = os.environ['TEST_SHIFT_ID']
+        incident_id = os.environ['TEST_INCIDENT_ID']
 
-        zone_id_for_assign_incident = "8a6ef71079e54af2884563e93c4ad800"
+        zone_id_for_assign_incident = '8a6ef71079e54af2884563e93c4ad800'
 
         request_body = {
             "SeatId": seat_id,
             "ShiftID": shift_id,
             "zoneId": zone_id_for_assign_incident,
-            "IncidentID": incident_id,
+            "IncidentID": incident_id
         }
 
-        response = scworkforcemanagement.assign_shift_to_incident(
-            org, prop_id, pid, json.dumps(request_body), test_client
-        )
+        response = scworkforcemanagement.assign_shift_to_incident(org, prop_id, pid, json.dumps(request_body),
+                                                                  test_client)
 
-        print("Find availability request complete. Response is:")
+        print('Find availability request complete. Response is:')
         print(response)
 
-        print(
-            f"{test_client} client was used for this request. Response will be parsed accordingly."
-        )
+        print(f'{test_client} client was used for this request. Response will be parsed accordingly.')
 
         # region Parse response based on type of client
         if test_client == CLIENT_TYPE_ASYNC:
             response_content = response
-            print("Obtained response")
+            print('Obtained response')
         else:
             status_code = response.status_code
-            print(f"Status code in this response is: {status_code}")
+            print(f'Status code in this response is: {status_code}')
             response_content = response.json()
-            print("Obtained .json() from response.")
+            print('Obtained .json() from response.')
         # endregion
 
-    print("Type of response content is:")
+    print('Type of response content is:')
     type_response = type(response_content)
     print(type_response)
 
     if type_response is HTTPClientError or type_response is HTTPTimeoutError:
-        _status_text = "Error in HTTP Request by sc-python-sdk"
+        _status_text = 'Error in HTTP Request by sc-python-sdk'
         _err_text = response_content.message
         _status_code = response_content.code
-        return_text = f"{_status_text}: code: {_status_code}| message: {_err_text}"
+        return_text = f'{_status_text}: code: {_status_code}| message: {_err_text}'
         print(return_text)
         return
 
@@ -542,11 +468,9 @@ def test_assign_incident(test_client=CLIENT_TYPE_ASYNC, return_mock: bool = True
     print(list(response_content.keys()))
 
     if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
-        desired_data = response_content["data"]
+        desired_data = response_content['data']
         print('Extracted "data" from response. Data is:')
         print(pformat(desired_data))
-
-
 # endregion
 
 
@@ -583,7 +507,6 @@ def _create_data_for_incident(zone_details: dict):
 def load_env_vars(load_from_dotenv_file: bool = False, dotenv_filepath: str = None):
 
     from dotenv import load_dotenv
-
     if load_from_dotenv_file is True:
         print("Loading variables from standard environment file into environment...")
         if dotenv_filepath is None:
@@ -599,103 +522,45 @@ def load_env_vars(load_from_dotenv_file: bool = False, dotenv_filepath: str = No
         load_dotenv(filepath)
         print("Loaded vars from above .env file in current environment.")
     else:
-        print("Setting env vars manually.")
-        os.environ["TEST_ORG"] = "TestOrgId"
-        os.environ["TEST_PID"] = "TestPID"
-        os.environ["SC_DEVICE_MANAGEMENT_HOST"] = ""
-        os.environ["SC_DEVICE_MANAGEMENT_HTTP_PROTOCOL"] = ""
-        os.environ["SC_DEVICE_MANAGEMENT_PORT"] = ""
+        print('Setting env vars manually.')
+        os.environ['TEST_ORG'] = 'TestOrgId'
+        os.environ['TEST_PID'] = 'TestPID'
+        os.environ['SC_DEVICE_MANAGEMENT_HOST'] = ''
+        os.environ['SC_DEVICE_MANAGEMENT_HTTP_PROTOCOL'] = ''
+        os.environ['SC_DEVICE_MANAGEMENT_PORT'] = ''
 
 
-def test_op_in_service(
-    service: str, op: str, org: str = None, pid: str = None, return_mock: bool = True
-):
+def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
 
     if LOAD_ENV_VARS is True:
         load_env_vars(load_from_dotenv_file=True)
 
     if org is None:
-        org = os.environ["TEST_ORG"]
+        org = os.environ['TEST_ORG']
 
     if pid is None:
-        pid = os.environ["TEST_PID"]
+        pid = os.environ['TEST_PID']
 
-    prop_id = os.environ["TEST_PROP_ID"]
-    access_key_for_prop = os.environ["SC_ACCESS_KEY"]
-    secret_key_for_prop = os.environ["SC_SECRET_KEY"]
-
-    from SDK import utils
-
-    response = utils.register_credentials_for_property(
-        prop_id, access_key_for_prop, secret_key_for_prop
-    )
-    print(f"Register credentials response is:\n{pformat(response)}")
-
-    if response["success"] is False:
-        raise Exception("Register credentials failed.")
+    if prop_id is None:
+        prop_id = os.environ['TEST_PROP_ID']
 
     client = CLIENT_TYPE_ASYNC
 
     if service == device_management.SERVICE_ID:
-        response = test_device_management_api(
-            op, org, prop_id, pid, client, return_mock
-        )
+        test_device_management_api(op, org, prop_id, pid, client, return_mock)
     elif service == grids.SERVICE_ID:
-        response = test_grids_api(op, org, pid, client, return_mock)
+        test_grids_api(op, org, prop_id, pid, client, return_mock)
     elif service == workforce_management.SERVICE_ID:
-        response = test_workforce_apis(op, org, pid, prop_id, client, return_mock)
+        test_workforce_apis(op, org, prop_id, pid, client, return_mock)
     elif service == sms_gateway.SERVICE_ID:
-        response = test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
+        test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
     elif service == partners_solutions.SERVICE_ID:
-        response = test_partners_solutions_op(op, org, prop_id, client, return_mock)
+        test_partners_solutions_op(op, org, prop_id, client, return_mock)
     else:
-        raise Exception("Test Requests for service not yet added")
-
-    utils.deregister_credentials_for_property(property_id=prop_id)
-
-    handle_response(response)
+        raise Exception('Test Requests for service not yet added')
 
 
-def test_sdk_utils():
-
-    from test import sdk_utils
-
-    sdk_utils.test_utils()
-
-
-def handle_response(test_response: dict):
-    # eg1 = {'code': 'failure', 'error': '[Errno 61] Connection refused'}
-    # eg2 = {
-    #  'code': 'failure',
-    #  'error': 'No such property with the provided propid exists in the '
-    #           'sc-tenants.yml file.'}
-    # eg3 = {'code': 'failure', 'error': '[Errno 54] Connection reset by peer'}
-    # eg4 = {'code': 'failure',
-    #        'error': {'code': 'INVALID_BUILDING',
-    #                  'message': 'The building id you specified is incorrect or not a '
-    #                             'part of the property you are accessing.'}}
-
-    # eg5= {
-    #     'code': 'failure',
-    #     'error': {'code': 'MISSING_TIME',
-    #               'message': 'HMAC auth requires you to supply the time in header '
-    #                          'x-sc-time.'}
-    # }
-
-    if "error" in test_response and test_response["error"]:
-        print(f'Error in response is:{test_response["error"]}')
-
-    if "message" in test_response and test_response["message"]:
-        print(f'message in response is:\n{test_response["message"]}')
-
-    if "code" in test_response and test_response["code"]:
-        if test_response["code"] == "failure":
-            print(f'Code in response is: {test_response["code"]}', file=sys.stderr)
-        else:
-            print(f'Code in response is: {test_response["code"]}')
-
-
-TEST_DEVICE_ALIAS_ID = "TestDeviceAlias"
+TEST_DEVICE_ALIAS_ID = 'TestDeviceAlias'
 TEST_CLIENT = CLIENT_TYPE_ASYNC
 
 TEST_READ_ZONE_RESPONSE = {
@@ -818,99 +683,98 @@ WORKFORCE_FIND_AVAILABILITY_RESPONSE_2 = {
 # Created on 01 June 2021, 2:03 SGT
 WORKFORCE_ASSIGN_INCIDENT_RESPONSE = {
     "message": "Incident has been successfully assigned to <seat_id>",
-    "code": "SUCCESS",
+    "code": "SUCCESS"
 }
 # endregion
 
 
 # region Sample response for Device Management
-MOCK_RESPONSE_DEVICE_MGMT_REAL_SENSE_MIGRATED = {"ID": "TestPID", "Migrated": False}
+MOCK_RESPONSE_DEVICE_MGMT_REAL_SENSE_MIGRATED = {
+    'ID': 'TestPID',
+    'Migrated': False
+}
 
 
 MOCK_RESPONSE_DEVICE_MGMT_GET_DEVICE_SLOTS = {
-    "Slots": [
-        {
-            "ATTR": "attr#devices#info#ID",
-            "Alias": "TestAliasId",
-            "Commissioned": 0,
-            "Conn": "BLE",
-            "CreatedBy": "smartclean",
-            "CreatedOn": 1635494680,
-            "DeviceNotAssociated": 0,
-            "Devid": "55954A2B11",
-            "Display": "Paper Towel",
-            "FirmwareVersion": "2",
-            "ID": "SCDevices#ID",
-            "LID": "7911afb00468475da10ae8a57bdfe80b",
-            "NS": "DEVICE_INFO_GENERAL",
-            "Org": "LHN",
-            "PID": "TestPID",
-            "Params": {"DeviceParams": {"MAX": 110, "OFFSET": 5}},
-            "ParamsNotConfigured": 1,
-            "ParamsOnDeviceNotConfigured": 0,
-            "PartnerId": "SMARTCLEAN",
-            "PropId": "TestPropId",
-            "ProviderOrg": "SMARTCLEAN",
-            "RequiresHealthCheck": 1,
-            "RequiresOnDeviceConfiguration": 0,
-            "RequiresParamsConfiguration": 1,
-            "SRN": "null",
-            "TZ": "Asia/Singapore",
-            "Type": "SMARTCLEAN#DevType",
-            "Unhealthy": 0,
-            "UpdatedBy": "smartclean",
-            "UpdatedOn": 1635496487,
-            "ZoneId": "ZoneID",
-        }
+    'Slots': [
+        {'ATTR': 'attr#devices#info#ID',
+         'Alias': 'TestAliasId',
+         'Commissioned': 0,
+         'Conn': 'BLE',
+         'CreatedBy': 'smartclean',
+         'CreatedOn': 1635494680,
+         'DeviceNotAssociated': 0,
+         'Devid': '55954A2B11',
+         'Display': 'Paper Towel',
+         'FirmwareVersion': '2',
+         'ID': 'SCDevices#ID',
+         'LID': '7911afb00468475da10ae8a57bdfe80b',
+         'NS': 'DEVICE_INFO_GENERAL',
+         'Org': 'LHN',
+         'PID': 'TestPID',
+         'Params': {'DeviceParams': {'MAX': 110, 'OFFSET': 5}},
+         'ParamsNotConfigured': 1,
+         'ParamsOnDeviceNotConfigured': 0,
+         'PartnerId': 'SMARTCLEAN',
+         'PropId': 'TestPropId',
+         'ProviderOrg': 'SMARTCLEAN',
+         'RequiresHealthCheck': 1,
+         'RequiresOnDeviceConfiguration': 0,
+         'RequiresParamsConfiguration': 1,
+         'SRN': 'null',
+         'TZ': 'Asia/Singapore',
+         'Type': 'SMARTCLEAN#DevType',
+         'Unhealthy': 0,
+         'UpdatedBy': 'smartclean',
+         'UpdatedOn': 1635496487,
+         'ZoneId': 'ZoneID'}
     ],
-    "code": "SUCCESS",
-    "message": "Successfully fetched given slots",
+    'code': 'SUCCESS',
+    'message': 'Successfully fetched given slots'
 }
 # endregion
 
 
 MOCK_RESPONSE_SEND_SMS = {
     "code": "SUCCESS",
-    "message": "Successfully sent SMS to phone numbers",
+    "message": "Successfully sent SMS to phone numbers"
 }
 
 
 # region Test desired Op in desired Service
-def test_device_management_api(
-    op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True
-):
+def test_device_management_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
     if return_mock is True:
         response_mocker = test.data.SCDeviceManagement(client)
         _create_mock_resp = response_mocker.create_response_for_op(op)
-        mock_response = _create_mock_resp["response"]
-        mock_response_status = _create_mock_resp["text"]
+        mock_response = _create_mock_resp['response']
+        mock_response_status = _create_mock_resp['text']
 
         if mock_response is None:
-            raise Exception(f"Failed to create mock response ({mock_response_status})")
-        response = mock_response
+            raise Exception(f'Failed to create mock response ({mock_response_status})')
+        response_content = mock_response
     else:
 
         from SDK.SCDeviceManagement.API import SCDeviceManagement
-
         print("SCDevicemanagement imported from respective service directory.")
         scdevicemanagement = SCDeviceManagement()
         print("SCDeviceManagement instantiated.")
 
-        test_client = CLIENT_TYPE_ASYNC
+        test_client = TEST_CLIENT
 
-        if op == "realSenseMigrated":
+        if op == 'realSenseMigrated':
             response = scdevicemanagement.realSenseMigrated(
-                org, pid, prop_id, test_client
-            )
+                org, pid, prop_id, test_client)
 
-            print(f"{op} request complete. Response is:")
+            print(f'{op} request complete. Response is:')
             print(response)
         else:
 
-            request_body = {"Alias": ["cdf4ecd4fba24eb9834d65bdf6cff36f"]}
+            request_body = {
+                "Alias": ['cdf4ecd4fba24eb9834d65bdf6cff36f']
+            }
 
             response = scdevicemanagement.getDeviceSlots(
                 org, pid, prop_id, json.dumps(request_body), test_client
@@ -924,74 +788,70 @@ def test_device_management_api(
         )
 
         # region Parse response based on type of client
-        # if test_client == CLIENT_TYPE_ASYNC:
-        #     response_content = response
-        #     print("Obtained response")
-        # else:
-        #     status_code = response.status_code
-        #     print(f"Status code in this response is: {status_code}")
-        #     response_content = response.json()
-        #     print("Obtained .json() from response.")
+        if test_client == CLIENT_TYPE_ASYNC:
+            response_content = response
+            print("Obtained response")
+        else:
+            status_code = response.status_code
+            print(f"Status code in this response is: {status_code}")
+            response_content = response.json()
+            print("Obtained .json() from response.")
         # endregion
 
     print("Type of response content is:")
-    type_response = type(response)
+    type_response = type(response_content)
     print(type_response)
 
-    # if type_response is HTTPClientError or type_response is HTTPTimeoutError:
-    #     _status_text = "Error in HTTP Request by sc-python-sdk"
-    #     _err_text = response_content.message
-    #     _status_code = response_content.code
-    #     return_text = f"{_status_text}: code: {_status_code}| message: {_err_text}"
-    #     print(return_text)
-    #     return
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
+        _status_text = "Error in HTTP Request by sc-python-sdk"
+        _err_text = response_content.message
+        _status_code = response_content.code
+        return_text = f"{_status_text}: code: {_status_code}| message: {_err_text}"
+        print(return_text)
+        return
     # Example of error response:
     # Error in HTTP Request by sc-python-sdk: code: 400| message: Bad Request
     print("Keys in Response content is:")
-    print(list(response.keys()))
+    print(list(response_content.keys()))
 
-    print("Response content is:")
-    print(pformat(response))
-
-    return response
+    print('Response content is:')
+    print(pformat(response_content))
 
 
-def test_grids_api(op: str, org: str, pid: str, client: str, return_mock: bool = True):
+def test_grids_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # SUpply args to mocker to update the mock data
 
     if return_mock is True:
         response_mocker = test.data.SCGrids(client)
         _create_mock_resp = response_mocker.create_response_for_op(op)
-        mock_response = _create_mock_resp["response"]
-        mock_response_status = _create_mock_resp["text"]
+        mock_response = _create_mock_resp['response']
+        mock_response_status = _create_mock_resp['text']
 
         if mock_response is None:
-            raise Exception(f"Failed to create mock response ({mock_response_status})")
+            raise Exception(f'Failed to create mock response ({mock_response_status})')
         response_content = mock_response
 
     else:
 
         from SDK.SCGridsServices.API import SCGrids
-
-        print("SCGrids imported from respective service directory.")
+        print('SCGrids imported from respective service directory.')
         grids = SCGrids()
-        print("SCGrids instantiated.")
+        print('SCGrids instantiated.')
 
         test_client = TEST_CLIENT
 
         if op == GRIDS_OP_GET_ZONE_INFO:
             zone_id = os.environ["TEST_ZONE_ID"]
             request_body = {"InsID": zone_id}
-            response = grids.read_zone(org, pid, json.dumps(request_body), test_client)
+            response = grids.read_zone(org, pid, prop_id, json.dumps(request_body), test_client)
 
-            print(f"{op} request complete. Response is:")
+            print(f'{op} request complete. Response is:')
             print(response)
         elif op == GRIDS_OP_GET_PROPERTY_INFO:
-            prop_id = os.environ["TEST_PROP_ID"]
             response = grids.readProperty(org, pid, prop_id, test_client)
         else:
-            response = grids.readBuilding(org, pid, test_client)
+            response = grids.readBuilding(org, pid, prop_id, test_client)
 
         print(
             f"{test_client} client was used for this request. Response will be parsed accordingly."
@@ -1029,12 +889,8 @@ def test_grids_api(op: str, org: str, pid: str, client: str, return_mock: bool =
         print('Extracted "data" from response. Data is:')
         print(pformat(desired_data))
 
-    return response_content
 
-
-def test_workforce_apis(
-    op: str, org: str, pid: str, prop_id: str, client: str, return_mock: bool = True
-):
+def test_workforce_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -1048,16 +904,15 @@ def test_workforce_apis(
     if return_mock is True:
         response_mocker = test.data.SCWorkforceManagement(client)
         _create_mock_resp = response_mocker.create_response_for_op(op)
-        mock_response = _create_mock_resp["response"]
-        mock_response_status = _create_mock_resp["text"]
+        mock_response = _create_mock_resp['response']
+        mock_response_status = _create_mock_resp['text']
 
         if mock_response is None:
-            raise Exception(f"Failed to create mock response ({mock_response_status})")
+            raise Exception(f'Failed to create mock response ({mock_response_status})')
         response_content = mock_response
     else:
 
         from SDK.SCWorkforceManagementServices.API import SCWorkforcemanagement
-
         print("SCWorkforcemanagement imported from respective service directory.")
         scworkforcemanagement = SCWorkforcemanagement()
         print("SCWorkforcemanagement instantiated.")
@@ -1065,20 +920,22 @@ def test_workforce_apis(
         test_client = TEST_CLIENT
 
         zone_id = os.environ["TEST_ZONE_ID"]
-        # prop_id = os.environ['TEST_PROP_ID']
         if op == WORKFORCE_MGMT_OP_FIND_AVAILABILITY:
             curr_unix_time = int(time.time())
             end_unix_time = (
-                curr_unix_time + 900
+                    curr_unix_time + 900
             )  # Adding 15 minutes to current for due time.
 
-            request_body = {"EndTime": end_unix_time, "ZoneID": [zone_id]}
+            request_body = {
+                "EndTime": end_unix_time,
+                "ZoneID": [zone_id]
+            }
 
             response = scworkforcemanagement.find_availability_for_incident(
-                org, prop_id, pid, json.dumps(request_body), test_client
+                org, pid, prop_id, json.dumps(request_body), test_client
             )
 
-            print(f"{op} request complete. Response is:")
+            print(f'{op} request complete. Response is:')
             print(response)
         elif op == WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE:
             test_zone_details = {
@@ -1087,31 +944,29 @@ def test_workforce_apis(
                 "zone_name": f"Test Name for ZoneID: {zone_id}",
             }
 
-            request_body = {"Incident": _create_data_for_incident(test_zone_details)}
+            request_body = {
+                "Incident": _create_data_for_incident(test_zone_details)
+            }
 
             response = scworkforcemanagement.createIncidentWithoutAssignee(
-                org, prop_id, pid, json.dumps(request_body), test_client
+                org, pid, prop_id, json.dumps(request_body), test_client
             )
         elif op == WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS:
-
-            response = scworkforcemanagement.get_incident_settings(
-                org, pid, prop_id, test_client
-            )
+            response = scworkforcemanagement.get_incident_settings(org, pid, prop_id, test_client)
         else:
-            seat_id = os.environ["TEST_SEAT_ID"]
-            shift_id = os.environ["TEST_SHIFT_ID"]
-            incident_id = os.environ["TEST_INCIDENT_ID"]
+            seat_id = os.environ['TEST_SEAT_ID']
+            shift_id = os.environ['TEST_SHIFT_ID']
+            incident_id = os.environ['TEST_INCIDENT_ID']
 
             request_body = {
                 "SeatId": seat_id,
                 "ShiftID": shift_id,
                 "zoneId": zone_id,
-                "IncidentID": incident_id,
+                "IncidentID": incident_id
             }
 
             response = scworkforcemanagement.assign_shift_to_incident(
-                org, prop_id, pid, json.dumps(request_body), test_client
-            )
+                org, pid, prop_id, json.dumps(request_body), test_client)
 
         print(
             f"{test_client} client was used for this request. Response will be parsed accordingly."
@@ -1144,31 +999,26 @@ def test_workforce_apis(
     print("Keys in Response content is:")
     print(list(response_content.keys()))
 
-    print("Response content is:")
+    print('Response content is:')
     print(pformat(response_content))
 
-    return response_content
 
-
-def test_sms_gateway_apis(
-    op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True
-):
+def test_sms_gateway_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
     if return_mock is True:
         response_mocker = test.data.SCMessageService(client)
         _create_mock_resp = response_mocker.create_response_for_op(op)
-        mock_response = _create_mock_resp["response"]
-        mock_response_status = _create_mock_resp["text"]
+        mock_response = _create_mock_resp['response']
+        mock_response_status = _create_mock_resp['text']
 
         if mock_response is None:
-            raise Exception(f"Failed to create mock response ({mock_response_status})")
+            raise Exception(f'Failed to create mock response ({mock_response_status})')
         response_content = mock_response
 
     else:
         from SDK.SCSMSGateway.API import SCSMSGateway
-
         print("SCSMSGateway imported from respective service directory.")
         sc_sms_gateway = SCSMSGateway()
         print("SCSMSGateway instantiated.")
@@ -1176,23 +1026,21 @@ def test_sms_gateway_apis(
         test_client = TEST_CLIENT
 
         from test import sms_gateway
-
         if op == sms_gateway.OP_PUBLISH_SMS:
             _request_data = {
                 "Country": "Asia/Kolkata",
                 "Who": "+918596866725",
-                "Message": "New incident reported by PT Device ID: a1e2runjnkjnd899e898ncja in location Male Washroom, Level 1. Please resolve - Pemimpin",
+                "Message": "New incident reported by PT Device ID: a1e2runjnkjnd899e898ncja in location Male Washroom, Level 1. Please resolve - Pemimpin"
             }
 
             exp_json = json.dumps(_request_data)
             response = sc_sms_gateway.publishSMS(
-                org, pid, prop_id, exp_json, test_client
-            )
+                org, pid, prop_id, exp_json, test_client)
 
-            print(f"{op} request complete. Response is:")
+            print(f'{op} request complete. Response is:')
             print(response)
         else:
-            raise Exception(f"{op} is not supported for this service")
+            raise Exception(f'{op} is not supported for this service')
 
         print(
             f"{test_client} client was used for this request. Response will be parsed accordingly."
@@ -1225,28 +1073,25 @@ def test_sms_gateway_apis(
     print("Keys in Response content is:")
     print(list(response_content.keys()))
 
-    print("Response content is:")
+    print('Response content is:')
     print(pformat(response_content))
-    return response_content
 
 
-def test_partners_solutions_op(
-    op: str, org: str, prop_id: str, client: str, return_mock: bool = True
-):
+def test_partners_solutions_op(op: str, org: str, prop_id: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
-    solution_id = "testSolution1"
+    solution_id = 'testSolution1'
     # pid = 'scnoop'
 
     if return_mock is True:
         response_mocker = test.data.SCPartnersSolutions(client)
         _create_mock_resp = response_mocker.create_response_for_op(op)
-        mock_response = _create_mock_resp["response"]
-        mock_response_status = _create_mock_resp["text"]
+        mock_response = _create_mock_resp['response']
+        mock_response_status = _create_mock_resp['text']
 
         if mock_response is None:
-            raise Exception(f"Failed to create mock response ({mock_response_status})")
+            raise Exception(f'Failed to create mock response ({mock_response_status})')
         response_content = mock_response
 
         # if op == partners_solutions.OP_GET_SOLUTION_FOR_PROPERTY:
@@ -1269,9 +1114,8 @@ def test_partners_solutions_op(
         #     }
 
     else:
-        print("Mock is False, will request the real service !")
+        print('Mock is False, will request the real service !')
         from SDK.SCPartnersSolutions.API import SCPartnersSolutions
-
         print("SCPartnersSolutions imported from respective service directory.")
         service = SCPartnersSolutions()
         print("SCPartnersSolutions instantiated.")
@@ -1279,29 +1123,20 @@ def test_partners_solutions_op(
         test_client = TEST_CLIENT
 
         from test import partners_solutions
-
         if op == partners_solutions.OP_ADD_SOLUTION_TO_PROPERTY:
-            response = service.addSolutionToProperty(
-                org, prop_id, solution_id, test_client
-            )
+            response = service.addSolutionToProperty(org, prop_id, solution_id, test_client)
         elif op == partners_solutions.OP_GET_SOLUTION_FOR_PROPERTY:
-            response = service.getSolutionForProperty(
-                org, prop_id, solution_id, test_client
-            )
+            response = service.getSolutionForProperty(org, prop_id, solution_id, test_client)
         elif op == partners_solutions.OP_LIST_ALL_SOLUTIONS_FOR_PROPERTY:
             response = service.listAllSolutionsForProperty(org, prop_id, test_client)
         elif op == partners_solutions.OP_APPROVE_SOLUTION_FOR_PROPERTY:
-            response = service.approveSolutionForProperty(
-                org, prop_id, solution_id, test_client
-            )
+            response = service.approveSolutionForProperty(org, prop_id, solution_id, test_client)
         elif op == partners_solutions.OP_DENY_SOLUTION_FOR_PROPERTY:
-            response = service.denySolutionForProperty(
-                org, prop_id, solution_id, test_client
-            )
+            response = service.denySolutionForProperty(org, prop_id, solution_id, test_client)
         else:
-            raise Exception(f"{op} is not supported for this service")
+            raise Exception(f'{op} is not supported for this service')
 
-        print(f"{op} request complete. Response is:")
+        print(f'{op} request complete. Response is:')
         print(response)
 
         print(
@@ -1335,33 +1170,29 @@ def test_partners_solutions_op(
     print("Keys in Response content is:")
     print(list(response_content.keys()))
 
-    print("Response content is:")
+    print('Response content is:')
     print(pformat(response_content))
-    return response_content
-
-
 # endregion
 
 
 def parse_sdk_response(client_type: str, sdk_response: any):
 
-    data_return = {"data": None, "text": "default"}
+    data_return = {
+        'data': None,
+        'text': 'default'
+    }
 
-    print(
-        f"Parsing given SDK Response: {sdk_response} based on client type: {client_type}"
-    )
+    print(f'Parsing given SDK Response: {sdk_response} based on client type: {client_type}')
 
     # region Parse response based on type of client
     if client_type == CLIENT_TYPE_ASYNC:
-        _status_text = "Obtained desired data from SDK response"
-        print(f"For {client_type} clients, desired data is what is returned by SDK")
-        data_return["text"] = _status_text
-        data_return["data"] = _status_text
+        _status_text = 'Obtained desired data from SDK response'
+        print(f'For {client_type} clients, desired data is what is returned by SDK')
+        data_return['text'] = _status_text
+        data_return['data'] = _status_text
         return data_return
 
-    print(
-        f"For {client_type} clients, desired data needs to be extracted via HTTP response attributes."
-    )
+    print(f'For {client_type} clients, desired data needs to be extracted via HTTP response attributes.')
     status_code = sdk_response.status_code
     _status_code_status_text = f"response.status_code is: {status_code}"
     print(_status_code_status_text)
@@ -1369,7 +1200,7 @@ def parse_sdk_response(client_type: str, sdk_response: any):
     status_codes_for_success = {200, 201}
 
     if status_code not in status_codes_for_success:
-        data_return["text"] = f"Cannot get desired data ({_status_code_status_text})"
+        data_return['text'] = f'Cannot get desired data ({_status_code_status_text})'
         return data_return
 
     try:
@@ -1377,24 +1208,16 @@ def parse_sdk_response(client_type: str, sdk_response: any):
     except Exception as err:
         _err_type = type(err).__name__
         _err_text = str(err)
-        err_info = (
-            f"{_err_type} trying to deserialize response using JSON ({_err_text})"
-        )
-        data_return["text"] = err_info
+        err_info = f'{_err_type} trying to deserialize response using JSON ({_err_text})'
+        data_return['text'] = err_info
         return data_return
     print("Obtained .json() from response.")
     # endregion
 
 
 if __name__ == "__main__":
-
-    # test_sdk_utils()
-
-    # print('\nWaiting 2 seconds before running next test')
-    # time.sleep(2)
-
-    test_op_in_service(
+    run_test(
         service=SERVICE_ID_WORKFORCE_MANAGEMENT,
         op=WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS,
-        return_mock=True,
+        return_mock=False
     )
