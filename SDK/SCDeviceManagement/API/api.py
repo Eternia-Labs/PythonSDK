@@ -9,6 +9,7 @@ HOST = "SC_DEVICE_MANAGEMENT_HOST"
 PROTOCOL = "SC_DEVICE_MANAGEMENT_HTTP_PROTOCOL"
 PORT = "SC_DEVICE_MANAGEMENT_PORT"
 
+
 class SCDeviceManagement:
     def __init__(self):
         self.Async_client = clientasync.getClient()
@@ -84,7 +85,7 @@ class SCDeviceManagement:
             )
         return res
 
-    def getDeviceSlots(self, org, pid, propid=None, expJson= '{}', client=None):
+    def getDeviceSlots(self, org, pid, propid=None, expJson="{}", client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",

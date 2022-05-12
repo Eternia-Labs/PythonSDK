@@ -9,6 +9,7 @@ HOST = "SC_DATETIMEUTILS_HOST"
 PROTOCOL = "SC_DATETIMEUTILS_HTTP_PROTOCOL"
 PORT = "SC_DATETIMEUTILS_PORT"
 
+
 class SCDatetimeutils:
     def __init__(self):
         self.Async_client = clientasync.getClient()
@@ -65,7 +66,7 @@ class SCDatetimeutils:
         except Exception as e:
             print("Exception " + str(e))
 
-    def getDateTimeForFrequency(self, org, pid, propid=None, expJson= '{}', client=None):
+    def getDateTimeForFrequency(self, org, pid, propid=None, expJson="{}", client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",

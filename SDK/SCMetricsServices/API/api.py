@@ -9,6 +9,7 @@ HOST = "SC_METRICS_HOST"
 PROTOCOL = "SC_METRICS_HTTP_PROTOCOL"
 PORT = "SC_METRICS_PORT"
 
+
 class SCMetrics:
     def __init__(self):
         self.Async_client = clientasync.getClient()
@@ -57,7 +58,7 @@ class SCMetrics:
         except Exception as e:
             print("Exception " + str(e))
 
-    def getModuleMetrics(self, org, pid, propid=None, expJson= '{}', client=None):
+    def getModuleMetrics(self, org, pid, propid=None, expJson="{}", client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
@@ -78,7 +79,7 @@ class SCMetrics:
             )
         return res
 
-    def getModuleTSMetrics(self, org, pid, propid=None, expJson= '{}', client=None):
+    def getModuleTSMetrics(self, org, pid, propid=None, expJson="{}", client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
