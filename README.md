@@ -75,7 +75,9 @@ Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId)
 
 1. Signing is "Enabled" by default. But it can be set manually too.
 SIGNING_STATUS_PYTHONSDK="Enabled"
+
 USER_NAME_PYTHONSDK=<user_name>
+
 PASSWORD_PYTHONSDK'=<password>
 
 # How to register and deregister credentials corresponding to properties?
