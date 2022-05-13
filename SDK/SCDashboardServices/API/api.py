@@ -9,6 +9,7 @@ HOST = "SC_DASHBOARD_HOST"
 PROTOCOL = "SC_DASHBOARD_HTTP_PROTOCOL"
 PORT = "SC_DASHBOARD_PORT"
 
+
 class SCDashboard:
     def __init__(self):
         self.Async_client = clientasync.getClient()
@@ -35,7 +36,7 @@ class SCDashboard:
             else:
                 prefix = "https"
                 print("SCDASHBOARD: protocol env variable is not set")
-                
+
             if os.getenv(PORT):
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
@@ -56,7 +57,7 @@ class SCDashboard:
         except Exception as e:
             print("Exception " + str(e))
 
-    def getWidgetImage(self, org, pid, propid=None, expJson= '{}', client=None):
+    def getWidgetImage(self, org, pid, propid=None, expJson="{}", client=None):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",

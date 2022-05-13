@@ -175,6 +175,8 @@ class SCWorkforceManagement(SCService):
                 _response_template = workforce_management.RESPONSE_TEMPLATE_CREATE_INCIDENT
             elif op == workforce_management.OP_FIND_AVAILABILITY:
                 _response_template = workforce_management.RESPONSE_TEMPLATE_FIND_AVAILABILITY
+            elif op == workforce_management.OP_GET_INCIDENT_SETTINGS:
+                _response_template = workforce_management.RESPONSE_TEMPLATE_GET_INCIDENT_SETTINGS
             else:
                 _response_template = workforce_management.RESPONSE_TEMPLATE_ASSIGN_INCIDENT
             # endregion

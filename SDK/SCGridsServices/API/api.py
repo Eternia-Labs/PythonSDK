@@ -12,6 +12,7 @@ PORT = "SC_GRIDS_PORT"
 # TODO:
 #  1. Infer return type from downstream operation & put in signature (replace "-> any" with "-> <type>")
 
+
 class SCGrids:
     def __init__(self):
         self.Async_client = clientasync.getClient()
@@ -59,7 +60,7 @@ class SCGrids:
 
         except Exception as e:
             print("Exception " + str(e))
-            
+
     def listProperties(self, org, pid, propid=None, client=None):
         """
         Gets list of all Properties
@@ -71,11 +72,19 @@ class SCGrids:
         """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.listProperties", org=org, pid=pid, propid=propid,
+                httpmethod="POST",
+                op="scgrids.listProperties",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.listProperties", org=org, pid=pid, propid=propid,
+                httpmethod="POST",
+                op="scgrids.listProperties",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         return res
 
@@ -135,6 +144,7 @@ class SCGrids:
                 propid=propid,
             )
         return res
+
     # endregion
 
     # region Requests for Building (pid is required in query params)
@@ -149,11 +159,19 @@ class SCGrids:
         """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.readBuilding", org=org, pid=pid, propid=propid,
+                httpmethod="POST",
+                op="scgrids.readBuilding",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.readBuilding", org=org, pid=pid, propid=propid,
+                httpmethod="POST",
+                op="scgrids.readBuilding",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         return res
 
@@ -168,15 +186,23 @@ class SCGrids:
         """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid, propid=propid,
+                httpmethod="POST",
+                op="scgrids.listLevelsByBuilding",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.listLevelsByBuilding", org=org, pid=pid, propid=propid,
+                httpmethod="POST",
+                op="scgrids.listLevelsByBuilding",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         return res
 
-    def buildingZoneMap(self, org, pid, propid=None, expJson= '{}', client=None):
+    def buildingZoneMap(self, org, pid, propid=None, expJson="{}", client=None):
         """
         Get Zone map in Building
 
@@ -218,17 +244,26 @@ class SCGrids:
         """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid, propid=propid,
+                httpmethod="POST",
+                op="scgrids.listBuildingMetrics",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scgrids.listBuildingMetrics", org=org, pid=pid, propid=propid,
+                httpmethod="POST",
+                op="scgrids.listBuildingMetrics",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         return res
+
     # endregion
 
     # region Requests for Level (LID is required in data)
-    def listZonesByLevel(self, org, pid, propid=None, expJson= '{}', client=None):
+    def listZonesByLevel(self, org, pid, propid=None, expJson="{}", client=None):
         """
         Gets list of all Zones in Level
 
@@ -257,10 +292,13 @@ class SCGrids:
                 body=json.loads(expJson),
             )
         return res
+
     # endregion
 
     # region Requests for Zone (InsID is required in data)
-    def read_zone(self, org: str, pid: str, propid=None, expJson= '{}', client=None) -> any:
+    def read_zone(
+        self, org: str, pid: str, propid=None, expJson="{}", client=None
+    ) -> any:
         """
         Gets details of Zone
 
@@ -290,4 +328,5 @@ class SCGrids:
 
         res = _client_obj.makeRequest(**request_kwargs)
         return res
+
     # endregion

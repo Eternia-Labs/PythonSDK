@@ -59,7 +59,6 @@ class SCSMSGateway:
                 org=org,
                 pid=pid,
                 propid=propid,
-                
             )
         else:
             res = self.Async_client.makeRequest(
@@ -71,4 +70,3 @@ class SCSMSGateway:
                 propid=propid,
             )
         return res
-

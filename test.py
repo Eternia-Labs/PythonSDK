@@ -39,6 +39,7 @@ SERVICE_ID_WORKFORCE_MANAGEMENT = workforce_management.SERVICE_ID
 WORKFORCE_MGMT_OP_ASSIGN_INCIDENT = workforce_management.OP_ASSIGN_INCIDENT
 WORKFORCE_MGMT_OP_FIND_AVAILABILITY = workforce_management.OP_FIND_AVAILABILITY
 WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = workforce_management.OP_CREATE_INCIDENT_NO_ASSIGNEE
+WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS = workforce_management.OP_GET_INCIDENT_SETTINGS
 # endregion
 
 # region SCSMSGateway
@@ -546,11 +547,11 @@ def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: s
     client = CLIENT_TYPE_ASYNC
 
     if service == device_management.SERVICE_ID:
-        test_device_management_api(op, org, pid, client, return_mock)
+        test_device_management_api(op, org, prop_id, pid, client, return_mock)
     elif service == grids.SERVICE_ID:
-        test_grids_api(op, org, pid, client, return_mock)
+        test_grids_api(op, org, prop_id, pid, client, return_mock)
     elif service == workforce_management.SERVICE_ID:
-        test_workforce_apis(op, org, pid, client, return_mock)
+        test_workforce_apis(op, org, prop_id, pid, client, return_mock)
     elif service == sms_gateway.SERVICE_ID:
         test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
     elif service == partners_solutions.SERVICE_ID:
@@ -741,7 +742,7 @@ MOCK_RESPONSE_SEND_SMS = {
 
 
 # region Test desired Op in desired Service
-def test_device_management_api(op: str, org: str, pid: str, client: str, return_mock: bool = True):
+def test_device_management_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
@@ -765,7 +766,7 @@ def test_device_management_api(op: str, org: str, pid: str, client: str, return_
 
         if op == 'realSenseMigrated':
             response = scdevicemanagement.realSenseMigrated(
-                org, pid, test_client)
+                org, pid, prop_id, test_client)
 
             print(f'{op} request complete. Response is:')
             print(response)
@@ -776,7 +777,7 @@ def test_device_management_api(op: str, org: str, pid: str, client: str, return_
             }
 
             response = scdevicemanagement.getDeviceSlots(
-                org, pid, json.dumps(request_body), test_client
+                org, pid, prop_id, json.dumps(request_body), test_client
             )
 
             print("getDeviceSlots request. Response is:")
@@ -817,7 +818,7 @@ def test_device_management_api(op: str, org: str, pid: str, client: str, return_
     print(pformat(response_content))
 
 
-def test_grids_api(op: str, org: str, pid: str, client: str, return_mock: bool = True):
+def test_grids_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # SUpply args to mocker to update the mock data
 
@@ -843,15 +844,14 @@ def test_grids_api(op: str, org: str, pid: str, client: str, return_mock: bool =
         if op == GRIDS_OP_GET_ZONE_INFO:
             zone_id = os.environ["TEST_ZONE_ID"]
             request_body = {"InsID": zone_id}
-            response = grids.read_zone(org, pid, json.dumps(request_body), test_client)
+            response = grids.read_zone(org, pid, prop_id, json.dumps(request_body), test_client)
 
             print(f'{op} request complete. Response is:')
             print(response)
         elif op == GRIDS_OP_GET_PROPERTY_INFO:
-            prop_id = os.environ['TEST_PROP_ID']
             response = grids.readProperty(org, pid, prop_id, test_client)
         else:
-            response = grids.readBuilding(org, pid, test_client)
+            response = grids.readBuilding(org, pid, prop_id, test_client)
 
         print(
             f"{test_client} client was used for this request. Response will be parsed accordingly."
@@ -890,7 +890,7 @@ def test_grids_api(op: str, org: str, pid: str, client: str, return_mock: bool =
         print(pformat(desired_data))
 
 
-def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: bool = True):
+def test_workforce_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -920,7 +920,6 @@ def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: b
         test_client = TEST_CLIENT
 
         zone_id = os.environ["TEST_ZONE_ID"]
-        prop_id = os.environ['TEST_PROP_ID']
         if op == WORKFORCE_MGMT_OP_FIND_AVAILABILITY:
             curr_unix_time = int(time.time())
             end_unix_time = (
@@ -933,7 +932,7 @@ def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: b
             }
 
             response = scworkforcemanagement.find_availability_for_incident(
-                org, prop_id, pid, json.dumps(request_body), test_client
+                org, pid, prop_id, json.dumps(request_body), test_client
             )
 
             print(f'{op} request complete. Response is:')
@@ -950,8 +949,10 @@ def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: b
             }
 
             response = scworkforcemanagement.createIncidentWithoutAssignee(
-                org, prop_id, pid, json.dumps(request_body), test_client
+                org, pid, prop_id, json.dumps(request_body), test_client
             )
+        elif op == WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS:
+            response = scworkforcemanagement.get_incident_settings(org, pid, prop_id, test_client)
         else:
             seat_id = os.environ['TEST_SEAT_ID']
             shift_id = os.environ['TEST_SHIFT_ID']
@@ -965,7 +966,7 @@ def test_workforce_apis(op: str, org: str, pid: str, client: str, return_mock: b
             }
 
             response = scworkforcemanagement.assign_shift_to_incident(
-                org, prop_id, pid, json.dumps(request_body), test_client)
+                org, pid, prop_id, json.dumps(request_body), test_client)
 
         print(
             f"{test_client} client was used for this request. Response will be parsed accordingly."
@@ -1216,7 +1217,7 @@ def parse_sdk_response(client_type: str, sdk_response: any):
 
 if __name__ == "__main__":
     run_test(
-        service=SERVICE_ID_PARTNERS_SOLUTIONS,
-        op=partners_solutions.OP_ADD_SOLUTION_TO_PROPERTY,
-        return_mock=True
+        service=SERVICE_ID_WORKFORCE_MANAGEMENT,
+        op=WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS,
+        return_mock=False
     )

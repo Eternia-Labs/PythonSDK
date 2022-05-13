@@ -1,5 +1,7 @@
 # PythonSDK
 
+# How to install and use it?
+
 ## Important Step:
 
 For installing Pycurl mentioned in the requirements.txt
@@ -22,7 +24,6 @@ If not installed in this way, it would throw error : ImportError: pycurl: libcur
 3. Open requirements.txt and install all the listed dependencies in virtual environment of the Python client repository
 
 
-
 ## Setup steps
 
 1. Clone repo
@@ -30,17 +31,16 @@ If not installed in this way, it would throw error : ImportError: pycurl: libcur
 3. Build a wheel - python3 setup.py sdist bdist_wheel
 4. pip install -e /path/to/the/root_folder/containing/setup.py  for installing a build distribution from local folder
 
-
-#### Usage:
-
-from SCGrids.services.Tasks import * 
-import json
-
-tasks = SCGrids()
-
-
-tasks.listZonesByLevel(ORG,PID,jsondata) 
-
+#### HMAC Signed Async Requests (Signing Enabled)
+1. Ensure pycurl (version: 7.43.0.6) is installed with the global option (with-openssl)
+- If not, run the following command in the project environment:
+`pip install pycurl==7.43.0.6 --global-option="--with-openssl"`
+2. Ensure CurlAsyncHTTPClient is used for the tornado AsyncHTTPClient 
+- In SDK/ClientAsync/clientasync.py, the following line must be available and not commented:
+`AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")`
+- Note When Signing is disabled this may cause some problems (so this is strictly for usage with Signing enabled)
+3. Ensure credentials (Access Key and Secret Key) are registered for desired Property
+- Refer to below section: "Register credentials for a property"
 
 #### Sample:
 
@@ -61,9 +61,6 @@ tasks.listZonesByLevel('SMARTCLEAN','test',jsondata)
 
 Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId,client='Sync')
 
-##### For json data:
-print(Property.json())
-
 #### For using the Async Client:
 
 Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId,client='Async')
@@ -72,44 +69,37 @@ Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId,client='Asy
 
 Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId)
 
-##### For json data:
-print(Property)
+##### Set the environment variables for using the SDK.
 
-#### For using it locally:
+Signing is "Enabled" by default. But it can be set manually too. 
 
-##### Set the environment variables for the corresponding service:
+SIGNING_STATUS_PYTHONSDK="Enabled"
 
-###### SC_DASHBOARD
-'SC_DASHBOARD_HOST'
-'SC_DASHBOARD_HTTP_PROTOCOL'
-'SC_DASHBOARD_PORT'
+# How to register and deregister credentials corresponding to properties?
 
-###### SC_GRIDS
-'SC_GRIDS_HOST'
-'SC_GRIDS_HTTP_PROTOCOL'
-'SC_GRIDS_PORT'
+## Register credentials for a property
 
-###### SC_BI
-'SC_BI_HOST'
-'SC_BI_HTTP_PROTOCOL'
-'SC_BI_PORT'
+Registration of credentials for a property is done so that you can access the details pertaining to that property if credentials get validated.
 
-###### SC_METRICS
-'SC_METRICS_HOST'
-'SC_METRICS_HTTP_PROTOCOL'
-'SC_METRICS_PORT'
+### Usage
 
-###### SC_WORKFORCEMANAGEMENT
-'SC_WORKFORCEMANAGEMENT_HOST'
-'SC_WORKFORCEMANAGEMENT_HTTP_PROTOCOL'
-'SC_WORKFORCEMANAGEMENT_PORT'
+from SDK.utils import *
 
-###### PROTOCOL is http or https.
+response = register_credentials_for_property(property_id=<property_id>, access_key=<access_key>, secret_key=<secret_key>)
 
-#### For not using it locally:
+property_id, access_key and secret_key need to be placed in the corresponding placeholders.
 
-Signing is not enabled. It is "Disabled" by default. You can enable it by setting the environment variables.
+## Deregister credentials for a property
 
-'SIGNING_STATUS_PYTHONSDK' ("Enabled")
-'USER_NAME_PYTHONSDK' (<user_name>)
-'PASSWORD_PYTHONSDK' (<password>)
+Deregistration of credentials for a property is done so that you can delete the credentials pertaining to a property which may no longer be in use.
+
+### Usage
+
+from SDK.utils import *
+
+response = deregister_credentials_for_property(property_id=<property_id>)
+
+property_id need to be placed in the corresponding placeholder.
+
+
+

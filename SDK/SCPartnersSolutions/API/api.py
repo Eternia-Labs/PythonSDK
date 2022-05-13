@@ -8,11 +8,10 @@ HOST = "SC_PARTNERS_SOLUTIONS_HOST"
 PROTOCOL = "SC_PARTNERS_SOLUTIONS_HTTP_PROTOCOL"
 PORT = "SC_PARTNERS_SOLUTIONS_PORT"
 apiversion = "v1"
-SERVICE_ID_IN_URL = 'solution'
+SERVICE_ID_IN_URL = "solution"
 
 
 class SCPartnersSolutions:
-
     def __init__(self):
         self.Async_client = clientasync.getClient()
         self.Sync_client = clientsync.getClient()
@@ -34,10 +33,18 @@ class SCPartnersSolutions:
                 port = os.getenv(PORT)
                 print(prefix, uri, port)
                 self.Async_client.initializeForService(
-                    prefix, uri, apiversion=apiversion, port=port, service="SCPartnersSolutions"
+                    prefix,
+                    uri,
+                    apiversion=apiversion,
+                    port=port,
+                    service="SCPartnersSolutions",
                 )
                 self.Sync_client.initializeForService(
-                    prefix, uri, apiversion=apiversion, port=port, service="SCPartnersSolutions"
+                    prefix,
+                    uri,
+                    apiversion=apiversion,
+                    port=port,
+                    service="SCPartnersSolutions",
                 )
             else:
                 print("SCPARTNERSSOLUTIONS: Port is not set")
@@ -51,25 +58,19 @@ class SCPartnersSolutions:
         except Exception as e:
             print("Exception " + str(e))
 
-    def getSolutionForProperty(self, org: str, prop_id: str, solution_id: str, client=None):
+    def getSolutionForProperty(
+        self, org: str, prop_id: str, solution_id: str, client=None
+    ):
 
         op = f"{SERVICE_ID_IN_URL}.getSolutionForProperty"
-        body = {'solutionId': solution_id}
+        body = {"solutionId": solution_id}
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id,
-                body=body
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id,
-                body=body
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
             )
         return res
 
@@ -78,85 +79,61 @@ class SCPartnersSolutions:
         op = f"{SERVICE_ID_IN_URL}.listAllSolutionsForProperty"
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id
+                httpmethod="POST", op=op, org=org, propid=prop_id
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id
+                httpmethod="POST", op=op, org=org, propid=prop_id
             )
         return res
 
-    def addSolutionToProperty(self, org: str, prop_id: str, solution_id: str, client=None):
+    def addSolutionToProperty(
+        self, org: str, prop_id: str, solution_id: str, client=None
+    ):
 
         op = f"{SERVICE_ID_IN_URL}.addSolutionToProperty"
-        body = {'solutionId': solution_id}
+        body = {"solutionId": solution_id}
 
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id,
-                body=body
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id,
-                body=body
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
             )
         return res
 
-    def approveSolutionForProperty(self, org: str, prop_id: str, solution_id: str, client=None):
+    def approveSolutionForProperty(
+        self, org: str, prop_id: str, solution_id: str, client=None
+    ):
 
         op = f"{SERVICE_ID_IN_URL}.approveSolutionForProperty"
-        body = {'solutionId': solution_id}
+        body = {"solutionId": solution_id}
 
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id,
-                body=body
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id,
-                body=body
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
             )
         return res
 
-    def denySolutionForProperty(self, org: str, prop_id: str, solution_id: str, client=None):
+    def denySolutionForProperty(
+        self, org: str, prop_id: str, solution_id: str, client=None
+    ):
 
         op = f"{SERVICE_ID_IN_URL}.denySolutionForProperty"
-        body = {'solutionId': solution_id}
+        body = {"solutionId": solution_id}
 
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id,
-                body=body
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST",
-                op=op,
-                org=org,
-                propid=prop_id,
-                body=body
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
             )
         return res
