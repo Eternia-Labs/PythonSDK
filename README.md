@@ -39,10 +39,8 @@ If not installed in this way, it would throw error : ImportError: pycurl: libcur
 - In SDK/ClientAsync/clientasync.py, the following line must be available and not commented:
 `AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")`
 - Note When Signing is disabled this may cause some problems (so this is strictly for usage with Signing enabled)
-3. Ensure Signing is enabled
-- Environment variable SIGNING_STATUS_PYTHONSDK must be set to "Enabled")
-4. Ensure credentials (Access Key and Secret Key) are registered for desired Property
-- By manually updating the sc-tenants.yml file. Add the Access Key and Secret Key for desired PropertyID.
+3. Ensure credentials (Access Key and Secret Key) are registered for desired Property
+- Refer to below section: "Register credentials for a property"
 
 #### Sample:
 
