@@ -43,7 +43,7 @@ def register_credentials_for_property(
     return response_data
 
 
-def deregister_credentials_for_property(property_id: str) -> dict:
+def deregister_credentials_for_property(property_id: str, access_key: str) -> dict:
 
     response_data = {"success": False, "text": "default"}
 
@@ -63,6 +63,14 @@ def deregister_credentials_for_property(property_id: str) -> dict:
     if not data:
         response_data["text"] = "Cannot find credentials in the tenants database."
         return response_data
+
+    if access_key != data[0][1]:
+        response_data[
+            "text"
+        ] = """Access key provided for the property is not correct. For deletion it should 
+            match with the access key provided for a property while 
+            registering credentials for the property."""
+        return response_data    
 
     # Deleting credentials for a particular property id.
     conn.execute("DELETE from Tenants where PropID = (?)", (property_id,))
