@@ -9,7 +9,7 @@ def credential_checker(filtered_credentials: dict):
     ):
         return {
             "code": "failure",
-            "error": f"Either 'sc_access_key' or 'sc_secret_key' is not provided in the sc-tenants.yml file.",
+            "error": f"Either 'sc_access_key' or 'sc_secret_key' is not provided while registering credentials for a property.",
         }
     elif (
         not filtered_credentials["sc_access_key"]
@@ -17,7 +17,7 @@ def credential_checker(filtered_credentials: dict):
     ):
         return {
             "code": "failure",
-            "error": f"Either 'sc_access_key' or 'sc_secret_key' value is not provided in the sc-tenants.yml file.",
+            "error": f"Either 'sc_access_key' or 'sc_secret_key' value is not provided while registering credentials for a property.",
         }
 
     return {"code": "success", "data": f"All values are provided."}
