@@ -712,7 +712,7 @@ MOCK_RESPONSE_SEND_SMS = {
 
 
 # region Test desired Op in desired Service
-def test_device_management_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_device_management_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
@@ -788,7 +788,7 @@ def test_device_management_api(op: str, org: str, prop_id: str, pid: str, client
     print(pformat(response_content))
 
 
-def test_grids_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_grids_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # SUpply args to mocker to update the mock data
 
@@ -860,7 +860,7 @@ def test_grids_api(op: str, org: str, prop_id: str, pid: str, client: str, retur
         print(pformat(desired_data))
 
 
-def test_workforce_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_workforce_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -973,7 +973,7 @@ def test_workforce_api(op: str, org: str, prop_id: str, pid: str, client: str, r
     print(pformat(response_content))
 
 
-def test_sms_gateway_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_sms_gateway_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
@@ -1209,13 +1209,13 @@ def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: s
     # print(response)
 
     if service == device_management.SERVICE_ID:
-        test_device_management_api(op, org, prop_id, pid, client, return_mock)
+        test_device_management_op(op, org, prop_id, pid, client, return_mock)
     elif service == grids.SERVICE_ID:
-        test_grids_api(op, org, prop_id, pid, client, return_mock)
+        test_grids_op(op, org, prop_id, pid, client, return_mock)
     elif service == workforce_management.SERVICE_ID:
-        test_workforce_api(op, org, prop_id, pid, client, return_mock)
+        test_workforce_op(op, org, prop_id, pid, client, return_mock)
     elif service == sms_gateway.SERVICE_ID:
-        test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
+        test_sms_gateway_op(op, org, prop_id, pid, client, return_mock)
     elif service == partners_solutions.SERVICE_ID:
         test_partners_solutions_op(op, org, prop_id, client, return_mock)
     else:
