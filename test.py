@@ -530,36 +530,6 @@ def load_env_vars(load_from_dotenv_file: bool = False, dotenv_filepath: str = No
         os.environ['SC_DEVICE_MANAGEMENT_PORT'] = ''
 
 
-def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
-
-    if LOAD_ENV_VARS is True:
-        load_env_vars(load_from_dotenv_file=True)
-
-    if org is None:
-        org = os.environ['TEST_ORG']
-
-    if pid is None:
-        pid = os.environ['TEST_PID']
-
-    if prop_id is None:
-        prop_id = os.environ['TEST_PROP_ID']
-
-    client = CLIENT_TYPE_ASYNC
-
-    if service == device_management.SERVICE_ID:
-        test_device_management_api(op, org, prop_id, pid, client, return_mock)
-    elif service == grids.SERVICE_ID:
-        test_grids_api(op, org, prop_id, pid, client, return_mock)
-    elif service == workforce_management.SERVICE_ID:
-        test_workforce_apis(op, org, prop_id, pid, client, return_mock)
-    elif service == sms_gateway.SERVICE_ID:
-        test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
-    elif service == partners_solutions.SERVICE_ID:
-        test_partners_solutions_op(op, org, prop_id, client, return_mock)
-    else:
-        raise Exception('Test Requests for service not yet added')
-
-
 TEST_DEVICE_ALIAS_ID = 'TestDeviceAlias'
 TEST_CLIENT = CLIENT_TYPE_ASYNC
 
@@ -890,7 +860,7 @@ def test_grids_api(op: str, org: str, prop_id: str, pid: str, client: str, retur
         print(pformat(desired_data))
 
 
-def test_workforce_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_workforce_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -1215,9 +1185,47 @@ def parse_sdk_response(client_type: str, sdk_response: any):
     # endregion
 
 
+def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
+
+    if LOAD_ENV_VARS is True:
+        load_env_vars(load_from_dotenv_file=True)
+
+    if org is None:
+        org = os.environ['TEST_ORG']
+
+    if pid is None:
+        pid = os.environ['TEST_PID']
+
+    if prop_id is None:
+        prop_id = os.environ['TEST_PROP_ID']
+
+    client = CLIENT_TYPE_ASYNC
+
+    # from SDK.utils import register_credentials_for_property
+    # access_key = os.environ['SC_ACCESS_KEY']
+    # secret_key = os.environ['SC_SECRET_KEY']
+    # response = register_credentials_for_property(prop_id, access_key, secret_key)
+    # print('Register credentials for property response is:')
+    # print(response)
+
+    if service == device_management.SERVICE_ID:
+        test_device_management_api(op, org, prop_id, pid, client, return_mock)
+    elif service == grids.SERVICE_ID:
+        test_grids_api(op, org, prop_id, pid, client, return_mock)
+    elif service == workforce_management.SERVICE_ID:
+        test_workforce_api(op, org, prop_id, pid, client, return_mock)
+    elif service == sms_gateway.SERVICE_ID:
+        test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
+    elif service == partners_solutions.SERVICE_ID:
+        test_partners_solutions_op(op, org, prop_id, client, return_mock)
+    else:
+        raise Exception('Test Requests for service not yet added')
+
+
 if __name__ == "__main__":
+
     run_test(
-        service=SERVICE_ID_WORKFORCE_MANAGEMENT,
-        op=WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS,
+        service=SERVICE_ID_GRIDS,
+        op=GRIDS_OP_GET_BUILDING_INFO,
         return_mock=False
     )
