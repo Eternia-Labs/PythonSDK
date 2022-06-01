@@ -32,13 +32,15 @@ SCPARAMS_ATTR_NAMES = {
     SCPARAMS_ATTR_NAME_VALUE
 }
 
+
+# Below is an example data object for SCParams Set / Update params requests
 """
 SCPARAMS_CREATE_PARAM_RECORD = {
     SCPARAMS_ATTR_NAME_SERVICE: 'sg.smartclean.vcs',
-    SCPARAMS_ATTR_NAME_ATTRIBUTE: None,
-    SCPARAMS_ATTR_NAME_NS: None,
-    SCPARAMS_ATTR_NAME_PRINCIPAL: None,
-    SCPARAMS_ATTR_NAME_VALUE: None
+    SCPARAMS_ATTR_NAME_ATTRIBUTE: 'TestProjectParameter',
+    SCPARAMS_ATTR_NAME_NS: 'Project',
+    SCPARAMS_ATTR_NAME_PRINCIPAL: 'TestPropertyId',
+    SCPARAMS_ATTR_NAME_VALUE: 'ValueOfTestProjectParameter'
 }
 """
 
