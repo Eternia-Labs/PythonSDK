@@ -33,6 +33,11 @@ SCPARAMS_ATTR_NAMES = {
 }
 
 
+# TODO: Future enhancement / proposal:
+# Add function or example to show:
+# How to create request body for set attributes async
+
+
 # Below is an example data object for SCParams Set / Update params requests
 """
 SCPARAMS_CREATE_PARAM_RECORD = {
@@ -94,7 +99,6 @@ class SCParams:
         except Exception as e:
             print("Exception " + str(e))
 
-    # How to create request body for set attributes async, make it a function?
 
     @classmethod
     def _validate_scparams_record(cls, scparams_record: dict) -> dict:
