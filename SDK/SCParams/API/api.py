@@ -10,6 +10,8 @@ PROTOCOL = "SC_PARAMS_HTTP_PROTOCOL"
 PORT = "SC_PARAMS_PORT"
 
 MODULE_NAME = 'scparams'
+
+# TODO: Note: This op name tentative (currently invalid for the real service)
 OP_NAME_SET_ATTRIBUTES_ASYNC = 'setAttributesAsync'
 
 MODULE_API_VERSION = 'v2'

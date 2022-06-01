@@ -62,12 +62,18 @@ class SCPropTeams:
         """
         if client == "Sync":
             res = self.Sync_client.makeRequest(
-                httpmethod="POST", op="scpropteams.getMemberGroup", org=org, pid=pid, propid=propid
+                httpmethod="POST",
+                op="scpropteams.getMemberGroup",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
-                httpmethod="POST", op="scpropteams.getMemberGroup", org=org, pid=pid, propid=propid
+                httpmethod="POST",
+                op="scpropteams.getMemberGroup",
+                org=org,
+                pid=pid,
+                propid=propid,
             )
         return res
-
-    

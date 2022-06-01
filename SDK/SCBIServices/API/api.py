@@ -9,6 +9,7 @@ HOST = "SC_BI_HOST"
 PROTOCOL = "SC_BI_HTTP_PROTOCOL"
 PORT = "SC_BI_PORT"
 
+
 class SCBi:
     def __init__(self):
         self.Async_client = clientasync.getClient()
@@ -28,7 +29,7 @@ class SCBi:
             else:
                 uri = f"{base}/scbi"
                 print("SCBI: Host is not set")
-                
+
             if os.getenv(PROTOCOL):
                 prefix = os.getenv(PROTOCOL)
             else:
@@ -55,14 +56,16 @@ class SCBi:
         except Exception as e:
             print("Exception " + str(e))
 
-    def getReportingServicesForPrincipalOrg(self, org, pid, propid=None, expJson= '{}', client=None):
+    def getReportingServicesForPrincipalOrg(
+        self, org, pid, propid=None, expJson="{}", client=None
+    ):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
                 op="scbi.getReportingServicesForPrincipalOrg",
                 body=json.loads(expJson),
                 org=org,
-                propid=propid
+                propid=propid,
             )
         else:
             res = self.Async_client.makeRequest(
@@ -70,11 +73,13 @@ class SCBi:
                 op="scbi.getReportingServicesForPrincipalOrg",
                 body=json.loads(expJson),
                 org=org,
-                propid=propid
+                propid=propid,
             )
         return res
 
-    def getReportingServicesForPrincipalBuilding(self, org, pid, propid=None, expJson= '{}', client=None):
+    def getReportingServicesForPrincipalBuilding(
+        self, org, pid, propid=None, expJson="{}", client=None
+    ):
         if client == "Sync":
             res = self.Sync_client.makeRequest(
                 httpmethod="POST",
