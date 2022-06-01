@@ -64,10 +64,14 @@ class SCParams:
                 prefix = "https"
                 print(f"{MODULE_NAME}: protocol env variable is not set")
 
+            # Below block of comments is for obtaining module version from remote (when required to do so)
+            """
             # url = "https://www.smartclean.io/matrix/utils/modules/moduleversions.json"
             # response = urlopen(url)
             # data_json = json.loads(response.read())
-            # apiversion = data_json["modules"]["scworkforcemanagement"]["version"]
+            # apiversion = data_json["modules"]["scparams"]["version"]
+            """
+
             apiversion = MODULE_API_VERSION
 
             if os.getenv(PORT):
