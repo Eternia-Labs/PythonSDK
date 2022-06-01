@@ -137,3 +137,25 @@ class SCPartnersSolutions:
                 httpmethod="POST", op=op, org=org, propid=prop_id, body=body
             )
         return res
+
+    # TODO: Below function is a prototype signature and is not yet approved
+    #  requires discussion on the blocker:
+    #  This request in the actual service has URL format different from what the HTTP (Sync / Async)
+    #  clients are creating
+
+    def readSolution(
+        self, org: str, prop_id: str, solution_id: str, client=None
+    ):
+
+        # op = f"{SERVICE_ID_IN_URL}.getSolutionForProperty"
+        op = 'readSolution'
+        body = {"solutionId": solution_id}
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST", op=op, org=org, propid=prop_id, body=body
+            )
+        return res
