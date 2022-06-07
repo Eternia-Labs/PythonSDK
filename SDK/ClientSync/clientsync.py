@@ -164,7 +164,7 @@ class ClientV1:
         try:
             if httpmethod == "GET":
                 body = None
-                requests.get(finalURI)
+                response = requests.get(finalURI)
             else:
                 body = json.dumps(body)
                 response = requests.post(

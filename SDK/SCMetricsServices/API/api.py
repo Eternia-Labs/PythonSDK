@@ -99,3 +99,24 @@ class SCMetrics:
                 propid=propid,
             )
         return res
+
+    def executeNamedQuery(self, org, pid, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scmetrics.executeNamedQuery",
+                org=org,
+                pid=pid,
+                propid=propid,
+                body=json.loads(expJson),
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scmetrics.executeNamedQuery",
+                org=org,
+                pid=pid,
+                propid=propid,
+                body=json.loads(expJson),
+            )
+        return res
