@@ -83,10 +83,14 @@ response = deregister_credentials_for_property(property_id=<property_id>)
 
 ### Example usage:
 ```python
-from SCGrids.services.Tasks import * 
+from SDK.SCGridsServices.API import *
 import json
 
-tasks = SCGrids()
+grids = SCGrids()
+
+Org='SMARTCLEAN'
+Pid='test_pid'
+PropId = 'test_propid'
 
 json_data = {
     "LID": "{{lid}}"
@@ -94,15 +98,21 @@ json_data = {
 
 jsondata = json.dumps(json_data)
  
-tasks.listZonesByLevel('SMARTCLEAN','test',jsondata)
+zones = grids.listZonesByLevel(org=Org, pid=Pid, expJson=jsondata)
+
+Pid = 'scnoop'
 
 #For using the Sync Client:
-Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId,client='Sync')
+Property = grids.readProperty(org=Org, pid=Pid, propid=PropId, client='Sync')
+#For getting the Sync Client's data:
+Property = Property.json()  
+#For getting the Sync Client's status code:
+Property_status_code = Property.status_code
 
 # For using the Async Client:
-Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId,client='Async')
+Property = grids.readProperty(org=Org, pid= Pid, propid=PropId, client='Async')
 # Or
-Property = grids.readProperty(org=org,pid = 'scnoop',propid = PropId)
+Property = grids.readProperty(org=Org, pid= Pid, propid=PropId)
 # Since Async Client is the default client
 ```
 

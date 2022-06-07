@@ -174,7 +174,7 @@ class ClientV1:
         except Exception as e:
             return {"code": "Failure", "Error": f"{e}"}
 
-        return response.json()
+        return response
 
     # def __del__(self):
     # 	print("Deleting client")
