@@ -221,7 +221,7 @@ class ClientV1:
                 print("inside exception", str(e))
                 return {"code": "failure", "error": f"{e}"}
 
-            return json.loads(response.body)
+            return response
 
         print("making request to ---", finalURI, "----")
         return asyncio.run(toExecute())

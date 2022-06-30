@@ -105,15 +105,19 @@ Pid = 'scnoop'
 #For using the Sync Client:
 Property = grids.readProperty(org=Org, pid=Pid, propid=PropId, client='Sync')
 #For getting the Sync Client's data:
-Property = Property.json()  
+propertyData = Property.json()  
 #For getting the Sync Client's status code:
-Property_status_code = Property.status_code
+propertyStatusCode = Property.status_code
 
 # For using the Async Client:
 Property = grids.readProperty(org=Org, pid= Pid, propid=PropId, client='Async')
 # Or
 Property = grids.readProperty(org=Org, pid= Pid, propid=PropId)
 # Since Async Client is the default client
+#For getting the Sync Client's data:
+propertyData = json.loads(Property.body)
+#For getting the Sync Client's status code:
+propertyStatusCode = Property.status
 ```
 
 ## Other Important things / common problems
