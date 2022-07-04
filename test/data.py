@@ -8,7 +8,8 @@ from test import (
     device_management,
     workforce_management,
     sms_gateway,
-    partners_solutions
+    partners_solutions,
+    scparams
 )
 
 
@@ -264,6 +265,43 @@ class SCPartnersSolutions(SCService):
             return data_return
 
         _data_template = partners_solutions.RESPONSE_DATA_TEMPLATE
+
+        # region Get Response Template (updated with data) based on Client Type
+        if self._sdk_client == definitions.SDK_CLIENT_TYPE_ASYNC:
+            _response_template = _data_template
+        else:
+            _desired_json = json.dumps(_data_template)
+            _response_template = MockHTTPResponse(_desired_json, self._desired_status_code)
+        # endregion
+
+        data_return['response'] = _response_template
+        data_return['text'] = 'Created Response Template'
+        return data_return
+
+
+class SCParams(SCService):
+
+    Ops = scparams.OPS
+
+    def __init__(self, client: str):
+
+        super().__init__(client)
+
+    def create_response_for_op(self, op: str) -> dict:
+
+        print(f'Creating Mock response for op: {op} in {self.__class__.__name__}')
+
+        data_return = {
+            'response': None,
+            'text': 'default'
+        }
+
+        if op not in self.__class__.Ops:
+            print(f'Ops in this class are: {self.ops}')
+            data_return['text'] = f'Given op: {op} does not have a test response available.'
+            return data_return
+
+        _data_template = scparams.RESPONSE_DATA_TEMPLATE
 
         # region Get Response Template (updated with data) based on Client Type
         if self._sdk_client == definitions.SDK_CLIENT_TYPE_ASYNC:

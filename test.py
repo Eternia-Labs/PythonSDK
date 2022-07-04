@@ -11,7 +11,8 @@ from test import (
     sms_gateway,
     device_management,
     workforce_management,
-    partners_solutions
+    partners_solutions,
+    scparams
 )
 
 LOAD_ENV_VARS = True
@@ -47,10 +48,10 @@ SERVICE_ID_SMS_GATEWAY = sms_gateway.SERVICE_ID
 SMS_GATEWAY_OP_PUBLISH_SMS = sms_gateway.OP_PUBLISH_SMS
 # endregion
 
-# region SCPartnersSolutions
+
 SERVICE_ID_PARTNERS_SOLUTIONS = partners_solutions.SERVICE_ID
-OPS = partners_solutions.OPS
-# endregion
+
+SERVICE_ID_SC_PARAMS = scparams.SERVICE_ID
 
 # endregion
 
@@ -530,36 +531,6 @@ def load_env_vars(load_from_dotenv_file: bool = False, dotenv_filepath: str = No
         os.environ['SC_DEVICE_MANAGEMENT_PORT'] = ''
 
 
-def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
-
-    if LOAD_ENV_VARS is True:
-        load_env_vars(load_from_dotenv_file=True)
-
-    if org is None:
-        org = os.environ['TEST_ORG']
-
-    if pid is None:
-        pid = os.environ['TEST_PID']
-
-    if prop_id is None:
-        prop_id = os.environ['TEST_PROP_ID']
-
-    client = CLIENT_TYPE_ASYNC
-
-    if service == device_management.SERVICE_ID:
-        test_device_management_api(op, org, prop_id, pid, client, return_mock)
-    elif service == grids.SERVICE_ID:
-        test_grids_api(op, org, prop_id, pid, client, return_mock)
-    elif service == workforce_management.SERVICE_ID:
-        test_workforce_apis(op, org, prop_id, pid, client, return_mock)
-    elif service == sms_gateway.SERVICE_ID:
-        test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
-    elif service == partners_solutions.SERVICE_ID:
-        test_partners_solutions_op(op, org, prop_id, client, return_mock)
-    else:
-        raise Exception('Test Requests for service not yet added')
-
-
 TEST_DEVICE_ALIAS_ID = 'TestDeviceAlias'
 TEST_CLIENT = CLIENT_TYPE_ASYNC
 
@@ -742,7 +713,7 @@ MOCK_RESPONSE_SEND_SMS = {
 
 
 # region Test desired Op in desired Service
-def test_device_management_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_device_management_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
@@ -818,7 +789,7 @@ def test_device_management_api(op: str, org: str, prop_id: str, pid: str, client
     print(pformat(response_content))
 
 
-def test_grids_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_grids_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # SUpply args to mocker to update the mock data
 
@@ -890,7 +861,7 @@ def test_grids_api(op: str, org: str, prop_id: str, pid: str, client: str, retur
         print(pformat(desired_data))
 
 
-def test_workforce_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_workforce_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -1003,7 +974,7 @@ def test_workforce_apis(op: str, org: str, prop_id: str, pid: str, client: str, 
     print(pformat(response_content))
 
 
-def test_sms_gateway_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_sms_gateway_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
@@ -1172,6 +1143,85 @@ def test_partners_solutions_op(op: str, org: str, prop_id: str, client: str, ret
 
     print('Response content is:')
     print(pformat(response_content))
+
+
+def test_scparams_op(op: str, org: str, prop_id: str, client: str, return_mock: bool = True):
+
+    # Supply args to mocker to update the mock data
+
+    pid = 'scnoop'
+
+    if return_mock is True:
+        response_mocker = test.data.SCParams(client)
+        _create_mock_resp = response_mocker.create_response_for_op(op)
+        mock_response = _create_mock_resp['response']
+        mock_response_status = _create_mock_resp['text']
+
+        if mock_response is None:
+            raise Exception(f'Failed to create mock response ({mock_response_status})')
+        response_content = mock_response
+
+    else:
+        print('Mock is False, will request the real service !')
+        from SDK.SCParams.API import SCParams
+        print("SCParams imported from respective service directory.")
+        service = SCParams()
+        print("SCParams instantiated.")
+
+        test_client = TEST_CLIENT
+
+        from test import scparams
+        if op == scparams.OP_NAME_SET_ATTRIBUTES_ASYNC:
+            # TODO: Create SCParams Records
+            record_1 = {}
+            record_2 = {
+                'service': 'sg.smartclean.vcs',
+                'attribute': 'random',
+                'ns': 'Project',
+                'value': '0',
+                'principal': pid
+            }
+            scparams_records = [record_1, record_2]
+            response = service.set_attributes_async(org, pid, prop_id, scparams_records, test_client)
+        else:
+            raise Exception(f'{op} is not supported for this service')
+
+        print(f'{op} request complete. Response is:')
+        print(response)
+
+        print(
+            f"{test_client} client was used for this request. Response will be parsed accordingly."
+        )
+
+        # region Parse response based on type of client
+        if test_client == CLIENT_TYPE_ASYNC:
+            response_content = response
+            print("Obtained response")
+        else:
+            status_code = response.status_code
+            print(f"Status code in this response is: {status_code}")
+            response_content = response.json()
+            print("Obtained .json() from response.")
+        # endregion
+
+    print("Type of response content is:")
+    type_response = type(response_content)
+    print(type_response)
+
+    if type_response is HTTPClientError or type_response is HTTPTimeoutError:
+        _status_text = "Error in HTTP Request by sc-python-sdk"
+        _err_text = response_content.message
+        _status_code = response_content.code
+        return_text = f"{_status_text}: code: {_status_code}| message: {_err_text}"
+        print(return_text)
+        return
+    # Example of error response:
+    # Error in HTTP Request by sc-python-sdk: code: 400| message: Bad Request
+    print("Keys in Response content is:")
+    print(list(response_content.keys()))
+
+    print('Response content is:')
+    print(pformat(response_content))
 # endregion
 
 
@@ -1215,9 +1265,49 @@ def parse_sdk_response(client_type: str, sdk_response: any):
     # endregion
 
 
+def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
+
+    if LOAD_ENV_VARS is True:
+        load_env_vars(load_from_dotenv_file=True)
+
+    if org is None:
+        org = os.environ['TEST_ORG']
+
+    if pid is None:
+        pid = os.environ['TEST_PID']
+
+    if prop_id is None:
+        prop_id = os.environ['TEST_PROP_ID']
+
+    client = CLIENT_TYPE_ASYNC
+
+    # from SDK.utils import register_credentials_for_property
+    # access_key = os.environ['SC_ACCESS_KEY']
+    # secret_key = os.environ['SC_SECRET_KEY']
+    # response = register_credentials_for_property(prop_id, access_key, secret_key)
+    # print('Register credentials for property response is:')
+    # print(response)
+
+    if service == device_management.SERVICE_ID:
+        test_device_management_op(op, org, prop_id, pid, client, return_mock)
+    elif service == grids.SERVICE_ID:
+        test_grids_op(op, org, prop_id, pid, client, return_mock)
+    elif service == workforce_management.SERVICE_ID:
+        test_workforce_op(op, org, prop_id, pid, client, return_mock)
+    elif service == sms_gateway.SERVICE_ID:
+        test_sms_gateway_op(op, org, prop_id, pid, client, return_mock)
+    elif service == partners_solutions.SERVICE_ID:
+        test_partners_solutions_op(op, org, prop_id, client, return_mock)
+    elif service == scparams.SERVICE_ID:
+        test_scparams_op(op, org, prop_id, client, return_mock)
+    else:
+        raise Exception('Test Requests for service not yet added')
+
+
 if __name__ == "__main__":
+
     run_test(
-        service=SERVICE_ID_WORKFORCE_MANAGEMENT,
-        op=WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS,
+        service=SERVICE_ID_SC_PARAMS,
+        op=scparams.OP_NAME_SET_ATTRIBUTES_ASYNC,
         return_mock=False
     )
