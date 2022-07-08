@@ -213,7 +213,7 @@ class SCWorkforcemanagement:
 
         return res
 
-    def get_last_task_for_zone_in_time_range(self, org, pid, propid, zone_id: str, start_unix_t: int, end_unix_t: int, client = None):
+    def get_last_task_for_zone_in_24_hours(self, org, pid, propid, zone_id: str, client=None):
         """
         Get the last task for Zone in given time range.
 
@@ -221,8 +221,7 @@ class SCWorkforcemanagement:
         :param pid: (str) Project (Building) ID
         :param propid: (str) Property ID
         :param zone_id: (str) Zone ID
-        :param start_unix_t: (int) Start time (unix timestamp)
-        :param end_unix_t: (int) End time (unix timestamp)
+        :param client: (str) "Sync" or "Async" (default)
         :return: Response of request via SDK
         """
 

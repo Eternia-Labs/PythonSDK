@@ -177,7 +177,7 @@ class SCWorkforceManagement(SCService):
                 _response_template = workforce_management.RESPONSE_TEMPLATE_FIND_AVAILABILITY
             elif op == workforce_management.OP_GET_INCIDENT_SETTINGS:
                 _response_template = workforce_management.RESPONSE_TEMPLATE_GET_INCIDENT_SETTINGS
-            elif op == workforce_management.OP_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE:
+            elif op == workforce_management.OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS:
                 _response_template = workforce_management.RESPONSE_TEMPLATE_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE
             else:
                 _response_template = workforce_management.RESPONSE_TEMPLATE_ASSIGN_INCIDENT
