@@ -219,7 +219,7 @@ class SCWorkforcemanagement:
 
         :param org: (str) Organization ID
         :param pid: (str) Project (Building) ID
-        :param prop_id: (str) Property ID
+        :param propid: (str) Property ID
         :param zone_id: (str) Zone ID
         :param start_unix_t: (int) Start time (unix timestamp)
         :param end_unix_t: (int) End time (unix timestamp)
