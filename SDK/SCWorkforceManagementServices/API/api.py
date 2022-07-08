@@ -215,7 +215,7 @@ class SCWorkforcemanagement:
 
     def get_last_task_for_zone_in_24_hours(self, org, pid, propid, zone_id: str, client=None):
         """
-        Get the last task for Zone in given time range.
+        Get the last task for Zone in given in past 24 hours.
 
         :param org: (str) Organization ID
         :param pid: (str) Project (Building) ID
