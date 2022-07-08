@@ -854,7 +854,7 @@ def test_grids_op(op: str, org: str, prop_id: str, pid: str, client: str, return
     print("Keys in Response content is:")
     print(list(response_content.keys()))
 
-    if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
+    if 'data' in response_content:
         desired_data = response_content["data"]
         print('Extracted "data" from response. Data is:')
         print(pformat(desired_data))
