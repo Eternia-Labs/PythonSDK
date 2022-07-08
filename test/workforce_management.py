@@ -3,12 +3,14 @@ OP_ASSIGN_INCIDENT = 'assignIncident'
 OP_FIND_AVAILABILITY = 'findAvailability'
 OP_CREATE_INCIDENT_NO_ASSIGNEE = 'createIncidentWithoutAssignee'
 OP_GET_INCIDENT_SETTINGS = 'getIncidentsSettings'
+OP_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE = 'getLastTaskForZoneInTimeRange'
 
 OPS = {
     OP_ASSIGN_INCIDENT,
     OP_FIND_AVAILABILITY,
     OP_CREATE_INCIDENT_NO_ASSIGNEE,
-    OP_GET_INCIDENT_SETTINGS
+    OP_GET_INCIDENT_SETTINGS,
+    OP_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE
 }
 
 # region Data Template for each Op
@@ -76,11 +78,36 @@ _DATA_TEMPLATE_GET_INCIDENT_SETTINGS = {
     "ATTR": "attr#incidents#<pid>",
     "ID": "<pid>"
 }
+
+_DATA_TEMPLATE_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE = [
+    {
+        "PropID": "<Property ID>",
+        "SeatId": "<Seat ID>",
+        "ShiftId": "<Shift ID>",
+        "Status": "<STARTED / INCOMPLETE>",
+        "taskCount": 1,
+        "ZoneName": "<Zone Name>",
+        "Delayed": False,
+        "ZoneCatId": "<Zone Category ID>",
+        "ATTR": "attr#<Building ID>#<Property ID>#<Shift ID>#<Task ID>",
+        "AEnd": 1656928526,
+        "Start": 1656923219,
+        "TaskId": "<Task ID>",
+        "By": "<Incident Type / Source>",
+        "End": 1656924119,
+        "Type": "<TASK / INCIDENT>",
+        "Zone": "<Zone ID>",
+        "ID": "<Building ID>",
+        "Name": "<Incident Name>",
+        "Priority": "<Incident Priority>"
+    }
+]
 # endregion
 
 DATA_TEMPLATE_BY_OP = {
     OP_FIND_AVAILABILITY: _DATA_TEMPLATE_FIND_AVAILABILITY,
-    OP_GET_INCIDENT_SETTINGS: _DATA_TEMPLATE_GET_INCIDENT_SETTINGS
+    OP_GET_INCIDENT_SETTINGS: _DATA_TEMPLATE_GET_INCIDENT_SETTINGS,
+    OP_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE: _DATA_TEMPLATE_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE
 }
 
 RESPONSE_ATTR_CODE = 'code'
@@ -109,4 +136,11 @@ RESPONSE_TEMPLATE_GET_INCIDENT_SETTINGS = {
     RESPONSE_ATTR_CODE: RESPONSE_MESSAGE_VALUE_SUCCESS,
     RESPONSE_ATTR_MESSAGE: "Settings retrieved successfully",
     RESPONSE_ATTR_DATA: {}
+}
+
+RESPONSE_TEMPLATE_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE = {
+    RESPONSE_ATTR_CODE: RESPONSE_MESSAGE_VALUE_SUCCESS,
+    RESPONSE_ATTR_MESSAGE: "Successfully retrieved requested items in time range[UTC] YYYY-MM-DD HH:MM:SS(+0000)"
+                           " to YYYY-MM-DD HH:MM:SS(+0000) for ZONE: <Zone ID>.",
+    RESPONSE_ATTR_DATA: []
 }

@@ -212,3 +212,43 @@ class SCWorkforcemanagement:
             res = self.Async_client.makeRequest(**_args_for_function)
 
         return res
+
+    def get_last_task_for_zone_in_time_range(self, org, pid, propid, zone_id: str, start_unix_t: int, end_unix_t: int, client = None):
+        """
+        Get the last task for Zone in given time range.
+
+        :param org: (str) Organization ID
+        :param pid: (str) Project (Building) ID
+        :param prop_id: (str) Property ID
+        :param zone_id: (str) Zone ID
+        :param start_unix_t: (int) Start time (unix timestamp)
+        :param end_unix_t: (int) End time (unix timestamp)
+        :return: Response of request via SDK
+        """
+
+        print("In API / get last task for zone in time range:")
+        _function_args = locals()
+        print(f"Args given are: \n{pformat(_function_args)}")
+
+        op = "scteams.getLastNTasks"
+
+        request_body = {
+            "TasksFor": "ZONE",
+            "zoneId": zone_id
+        }
+
+        _args_for_function = {
+            "httpmethod": "POST",
+            "op": op,
+            "propid": propid,
+            "org": org,
+            "pid": pid,
+            "body": json.dumps(request_body),
+        }
+
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(**_args_for_function)
+        else:
+            res = self.Async_client.makeRequest(**_args_for_function)
+
+        return res

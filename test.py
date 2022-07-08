@@ -40,6 +40,7 @@ WORKFORCE_MGMT_OP_ASSIGN_INCIDENT = workforce_management.OP_ASSIGN_INCIDENT
 WORKFORCE_MGMT_OP_FIND_AVAILABILITY = workforce_management.OP_FIND_AVAILABILITY
 WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = workforce_management.OP_CREATE_INCIDENT_NO_ASSIGNEE
 WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS = workforce_management.OP_GET_INCIDENT_SETTINGS
+WORKFORCE_MGMT_OP_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE = workforce_management.OP_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE
 # endregion
 
 # region SCSMSGateway
@@ -923,6 +924,11 @@ def test_workforce_op(op: str, org: str, prop_id: str, pid: str, client: str, re
             )
         elif op == WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS:
             response = scworkforcemanagement.get_incident_settings(org, pid, prop_id, test_client)
+        elif op == WORKFORCE_MGMT_OP_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE:
+            end_unix_time = int(time.time())
+            start_unix_time = end_unix_time - 3600
+            response = scworkforcemanagement.get_last_task_for_zone_in_time_range(
+                org, pid, prop_id, zone_id, start_unix_time, end_unix_time)
         else:
             seat_id = os.environ['TEST_SEAT_ID']
             shift_id = os.environ['TEST_SHIFT_ID']
@@ -1225,7 +1231,7 @@ def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: s
 if __name__ == "__main__":
 
     run_test(
-        service=SERVICE_ID_GRIDS,
-        op=GRIDS_OP_GET_BUILDING_INFO,
-        return_mock=False
+        service=SERVICE_ID_WORKFORCE_MANAGEMENT,
+        op=WORKFORCE_MGMT_OP_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE,
+        return_mock=True
     )
