@@ -1,2 +1,2 @@
 from .api import SCWorkforcemanagement
-from util import LastTaskCompletedTime, Task
+from .util import LastTaskCompletedTime, LastTaskCompleted

@@ -5,7 +5,7 @@ import json
 from pprint import pformat
 from urllib.request import urlopen
 
-import mock
+from SDK.SCWorkforceManagementServices.API import mock
 from SDK import utils
 from SDK.ClientSync import clientsync
 from SDK.ClientAsync import clientasync
