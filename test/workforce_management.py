@@ -1,9 +1,10 @@
 SERVICE_ID = 'SCWorkforcemanagement'
 OP_ASSIGN_INCIDENT = 'assignIncident'
 OP_FIND_AVAILABILITY = 'findAvailability'
-OP_CREATE_INCIDENT_NO_ASSIGNEE = 'createIncidentWithoutAssignee'
+OP_CREATE_INCIDENT_NO_ASSIGNEE = 'scteams.createIncidentWithoutAssignee'
 OP_GET_INCIDENT_SETTINGS = 'getIncidentsSettings'
 OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS = 'getLastTaskForZoneIn24Hours'
+OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE = 'getTasksForZoneInTimeRange'
 
 OPS = {
     OP_ASSIGN_INCIDENT,
@@ -102,12 +103,37 @@ _DATA_TEMPLATE_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE = [
         "Priority": "<Incident Priority>"
     }
 ]
+
+_DATA_TEMPLATE_GET_TASKS_FOR_ZONE_IN_TIME_RANGE = [
+    {
+        "PropID": "<Property ID>",
+        "SeatId": "<Seat ID>",
+        "ShiftId": "<Shift ID>",
+        "Status": "<STARTED / INCOMPLETE>",
+        "taskCount": 1,
+        "ZoneName": "<Zone Name>",
+        "Delayed": False,
+        "ZoneCatId": "<Zone Category ID>",
+        "ATTR": "attr#<Building ID>#<Property ID>#<Shift ID>#<Task ID>",
+        "AEnd": 1656928526,
+        "Start": 1656923219,
+        "TaskId": "<Task ID>",
+        "By": "<Incident Type / Source>",
+        "End": 1656924119,
+        "Type": "<TASK / INCIDENT>",
+        "Zone": "<Zone ID>",
+        "ID": "<Building ID>",
+        "Name": "<Incident Name>",
+        "Priority": "<Incident Priority>"
+    }
+]
 # endregion
 
 DATA_TEMPLATE_BY_OP = {
     OP_FIND_AVAILABILITY: _DATA_TEMPLATE_FIND_AVAILABILITY,
     OP_GET_INCIDENT_SETTINGS: _DATA_TEMPLATE_GET_INCIDENT_SETTINGS,
-    OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS: _DATA_TEMPLATE_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE
+    OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS: _DATA_TEMPLATE_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE,
+    OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE: _DATA_TEMPLATE_GET_TASKS_FOR_ZONE_IN_TIME_RANGE
 }
 
 RESPONSE_ATTR_CODE = 'code'

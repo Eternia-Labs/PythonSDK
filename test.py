@@ -41,6 +41,7 @@ WORKFORCE_MGMT_OP_FIND_AVAILABILITY = workforce_management.OP_FIND_AVAILABILITY
 WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = workforce_management.OP_CREATE_INCIDENT_NO_ASSIGNEE
 WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS = workforce_management.OP_GET_INCIDENT_SETTINGS
 WORKFORCE_MGMT_OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS = workforce_management.OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS
+WORKFORCE_MGMT_OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE = workforce_management.OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE
 # endregion
 
 # region SCSMSGateway
@@ -924,8 +925,11 @@ def test_workforce_op(op: str, org: str, prop_id: str, pid: str, client: str, re
             )
         elif op == WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS:
             response = scworkforcemanagement.get_incident_settings(org, pid, prop_id, test_client)
-        elif op == WORKFORCE_MGMT_OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS:
-            response = scworkforcemanagement.get_last_task_for_zone_in_24_hours(org, pid, prop_id, zone_id)
+        elif op == WORKFORCE_MGMT_OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE:
+            end_unix_t = int(time.time())
+            start_unix_t = end_unix_t - 900
+            response = scworkforcemanagement.get_atmost_10_tasks_for_zone_in_time_range(
+                org, pid, prop_id, zone_id, start_unix_t, end_unix_t, test_client)
         else:
             seat_id = os.environ['TEST_SEAT_ID']
             shift_id = os.environ['TEST_SHIFT_ID']
@@ -1225,10 +1229,33 @@ def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: s
         raise Exception('Test Requests for service not yet added')
 
 
+    def test_get_last_task_completed_for_zone():
+        ...
+
+
+    def test_get_last_task_completed_time_for_zone():
+        ...
+
+
+def test_workforce_utils():
+
+    from SDK.SCWorkforceManagementServices.API.util import LastTaskCompletedTime
+
+    ltct_instance = LastTaskCompletedTime('TestOrg', 'TestProp')
+    response = ltct_instance.get_for_zone_v2('TestPID', 'TestInsID')
+
+    print('Test workforce util response:')
+    print(pformat(response))
+
+
 if __name__ == "__main__":
 
-    run_test(
-        service=SERVICE_ID_WORKFORCE_MANAGEMENT,
-        op=WORKFORCE_MGMT_OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS,
-        return_mock=False
-    )
+    load_env_vars(load_from_dotenv_file=True)
+
+    test_workforce_utils()
+
+    # run_test(
+    #     service=SERVICE_ID_WORKFORCE_MANAGEMENT,
+    #     op=WORKFORCE_MGMT_OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE,
+    #     return_mock=False
+    # )

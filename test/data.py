@@ -154,8 +154,9 @@ class SCWorkforceManagement(SCService):
             'text': 'default'
         }
 
+        print(f'Ops in this class are: {self.__class__.Ops}')
         if op not in self.__class__.Ops:
-            print(f'Ops in this class are: {self.__class__.Ops}')
+            print('Warning: op not added to Ops in test file of service.')
             data_return['text'] = f'Given op: {op} does not have a test response available.'
             return data_return
 
