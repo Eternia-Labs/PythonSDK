@@ -248,3 +248,55 @@ class SCBi:
                 propid=propid,
             )
         return res
+
+    def matrixDatframeJobFailure(self, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobFailure",
+                body=json.loads(expJson),
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobFailure",
+                body=json.loads(expJson),
+                propid=propid,
+            )
+        return res
+
+    def matrixDatframeJobSuccess(self, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobSuccess",
+                body=json.loads(expJson),
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobSuccess",
+                body=json.loads(expJson),
+                propid=propid,
+            )
+        return res
+
+    def matrixDatframeJobStarted(self, propid, expJson, client=None):
+        if client == "Sync":
+            res = self.Sync_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobStarted",
+                body=json.loads(expJson),
+                propid=propid,
+            )
+        else:
+            res = self.Async_client.makeRequest(
+                httpmethod="POST",
+                op="scbi.kpiJobStarted",
+                body=json.loads(expJson),
+                propid=propid,
+            )
+        return res
+
