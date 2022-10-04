@@ -40,6 +40,8 @@ WORKFORCE_MGMT_OP_ASSIGN_INCIDENT = workforce_management.OP_ASSIGN_INCIDENT
 WORKFORCE_MGMT_OP_FIND_AVAILABILITY = workforce_management.OP_FIND_AVAILABILITY
 WORKFORCE_MGMT_OP_CREATE_INCIDENT_NO_ASSIGNEE = workforce_management.OP_CREATE_INCIDENT_NO_ASSIGNEE
 WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS = workforce_management.OP_GET_INCIDENT_SETTINGS
+WORKFORCE_MGMT_OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS = workforce_management.OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS
+WORKFORCE_MGMT_OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE = workforce_management.OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE
 # endregion
 
 # region SCSMSGateway
@@ -530,36 +532,6 @@ def load_env_vars(load_from_dotenv_file: bool = False, dotenv_filepath: str = No
         os.environ['SC_DEVICE_MANAGEMENT_PORT'] = ''
 
 
-def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
-
-    if LOAD_ENV_VARS is True:
-        load_env_vars(load_from_dotenv_file=True)
-
-    if org is None:
-        org = os.environ['TEST_ORG']
-
-    if pid is None:
-        pid = os.environ['TEST_PID']
-
-    if prop_id is None:
-        prop_id = os.environ['TEST_PROP_ID']
-
-    client = CLIENT_TYPE_ASYNC
-
-    if service == device_management.SERVICE_ID:
-        test_device_management_api(op, org, prop_id, pid, client, return_mock)
-    elif service == grids.SERVICE_ID:
-        test_grids_api(op, org, prop_id, pid, client, return_mock)
-    elif service == workforce_management.SERVICE_ID:
-        test_workforce_apis(op, org, prop_id, pid, client, return_mock)
-    elif service == sms_gateway.SERVICE_ID:
-        test_sms_gateway_apis(op, org, prop_id, pid, client, return_mock)
-    elif service == partners_solutions.SERVICE_ID:
-        test_partners_solutions_op(op, org, prop_id, client, return_mock)
-    else:
-        raise Exception('Test Requests for service not yet added')
-
-
 TEST_DEVICE_ALIAS_ID = 'TestDeviceAlias'
 TEST_CLIENT = CLIENT_TYPE_ASYNC
 
@@ -742,7 +714,7 @@ MOCK_RESPONSE_SEND_SMS = {
 
 
 # region Test desired Op in desired Service
-def test_device_management_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_device_management_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
@@ -818,7 +790,7 @@ def test_device_management_api(op: str, org: str, prop_id: str, pid: str, client
     print(pformat(response_content))
 
 
-def test_grids_api(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_grids_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # SUpply args to mocker to update the mock data
 
@@ -884,13 +856,13 @@ def test_grids_api(op: str, org: str, prop_id: str, pid: str, client: str, retur
     print("Keys in Response content is:")
     print(list(response_content.keys()))
 
-    if EXTRACT_DATA_FROM_SDK_RESPONSE is True:
+    if 'data' in response_content:
         desired_data = response_content["data"]
         print('Extracted "data" from response. Data is:')
         print(pformat(desired_data))
 
 
-def test_workforce_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_workforce_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     if org is None:
         org = os.environ["TEST_ORG"]
@@ -953,6 +925,11 @@ def test_workforce_apis(op: str, org: str, prop_id: str, pid: str, client: str, 
             )
         elif op == WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS:
             response = scworkforcemanagement.get_incident_settings(org, pid, prop_id, test_client)
+        elif op == WORKFORCE_MGMT_OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE:
+            end_unix_t = int(time.time())
+            start_unix_t = end_unix_t - 900
+            response = scworkforcemanagement.get_atmost_10_tasks_for_zone_in_time_range(
+                org, pid, prop_id, zone_id, start_unix_t, end_unix_t, test_client)
         else:
             seat_id = os.environ['TEST_SEAT_ID']
             shift_id = os.environ['TEST_SHIFT_ID']
@@ -1003,7 +980,7 @@ def test_workforce_apis(op: str, org: str, prop_id: str, pid: str, client: str, 
     print(pformat(response_content))
 
 
-def test_sms_gateway_apis(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
+def test_sms_gateway_op(op: str, org: str, prop_id: str, pid: str, client: str, return_mock: bool = True):
 
     # Supply args to mocker to update the mock data
 
@@ -1215,9 +1192,70 @@ def parse_sdk_response(client_type: str, sdk_response: any):
     # endregion
 
 
+def run_test(service: str, op: str, org: str = None, prop_id: str = None, pid: str = None, return_mock: bool = True):
+
+    if LOAD_ENV_VARS is True:
+        load_env_vars(load_from_dotenv_file=True)
+
+    if org is None:
+        org = os.environ['TEST_ORG']
+
+    if pid is None:
+        pid = os.environ['TEST_PID']
+
+    if prop_id is None:
+        prop_id = os.environ['TEST_PROP_ID']
+
+    client = CLIENT_TYPE_ASYNC
+
+    # from SDK.utils import register_credentials_for_property
+    # access_key = os.environ['SC_ACCESS_KEY']
+    # secret_key = os.environ['SC_SECRET_KEY']
+    # response = register_credentials_for_property(prop_id, access_key, secret_key)
+    # print('Register credentials for property response is:')
+    # print(response)
+
+    if service == device_management.SERVICE_ID:
+        test_device_management_op(op, org, prop_id, pid, client, return_mock)
+    elif service == grids.SERVICE_ID:
+        test_grids_op(op, org, prop_id, pid, client, return_mock)
+    elif service == workforce_management.SERVICE_ID:
+        test_workforce_op(op, org, prop_id, pid, client, return_mock)
+    elif service == sms_gateway.SERVICE_ID:
+        test_sms_gateway_op(op, org, prop_id, pid, client, return_mock)
+    elif service == partners_solutions.SERVICE_ID:
+        test_partners_solutions_op(op, org, prop_id, client, return_mock)
+    else:
+        raise Exception('Test Requests for service not yet added')
+
+
+    def test_get_last_task_completed_for_zone():
+        ...
+
+
+    def test_get_last_task_completed_time_for_zone():
+        ...
+
+
+def test_workforce_utils():
+
+    from SDK.SCWorkforceManagementServices.API.util import LastTaskCompletedTime
+
+    ltct_instance = LastTaskCompletedTime('TestOrg', 'TestProp')
+    response = ltct_instance.get_for_zone_v2('TestPID', 'TestInsID')
+
+    print('Test workforce util response:')
+    print(pformat(response))
+
+
 if __name__ == "__main__":
-    run_test(
-        service=SERVICE_ID_WORKFORCE_MANAGEMENT,
-        op=WORKFORCE_MGMT_OP_GET_INCIDENT_SETTINGS,
-        return_mock=False
-    )
+
+    load_env_vars(load_from_dotenv_file=True)
+
+    test_workforce_utils()
+
+    # run_test(
+    #     service=SERVICE_ID_WORKFORCE_MANAGEMENT,
+    #     op=WORKFORCE_MGMT_OP_GET_TASKS_FOR_ZONE_IN_TIME_RANGE,
+    #     return_mock=False
+    # )

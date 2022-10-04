@@ -154,8 +154,9 @@ class SCWorkforceManagement(SCService):
             'text': 'default'
         }
 
+        print(f'Ops in this class are: {self.__class__.Ops}')
         if op not in self.__class__.Ops:
-            print(f'Ops in this class are: {self.__class__.Ops}')
+            print('Warning: op not added to Ops in test file of service.')
             data_return['text'] = f'Given op: {op} does not have a test response available.'
             return data_return
 
@@ -177,6 +178,8 @@ class SCWorkforceManagement(SCService):
                 _response_template = workforce_management.RESPONSE_TEMPLATE_FIND_AVAILABILITY
             elif op == workforce_management.OP_GET_INCIDENT_SETTINGS:
                 _response_template = workforce_management.RESPONSE_TEMPLATE_GET_INCIDENT_SETTINGS
+            elif op == workforce_management.OP_GET_LAST_TASK_FOR_ZONE_IN_24_HOURS:
+                _response_template = workforce_management.RESPONSE_TEMPLATE_GET_LAST_TASK_FOR_ZONE_IN_TIME_RANGE
             else:
                 _response_template = workforce_management.RESPONSE_TEMPLATE_ASSIGN_INCIDENT
             # endregion
