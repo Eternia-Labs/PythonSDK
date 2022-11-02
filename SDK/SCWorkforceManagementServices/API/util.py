@@ -196,6 +196,90 @@ class LastTaskCompleted:
             response_data['text'] = f'Successfully obtained latest completed task for this Zone in time range.'
             return response_data
 
+    def get_time_of_last_task_completed(self, pid: str, zone_id: str, duration_seconds: int = 900, unix_timestamp_end: int = None) -> dict:
+        """
+        Gets time of last Task completed for Zone
+
+        :param pid: (str) ID of Building / Project
+        :param zone_id: (str) ID of Zone / Installation
+        :param duration_seconds: (int) Duration (in seconds) for querying Tasks.
+        :param unix_timestamp_end: (int) End time (in unix timestamp) for querying Tasks.
+        :return:
+        """
+
+        function_name = f'time of last task completed for Zone: {zone_id} in Building: {pid}'
+        LOG.info(f'Getting {function_name}...')
+
+        function_arguments = locals()
+        LOG.debug(f'Options in function are:\n{pformat(function_name)}')
+
+        response_data = {
+            'value': None,
+            'text': f'Failed to get {function_name}',
+            'value_in_human_time_utc': None,
+            'desired_human_time_range_utc': None
+        }
+
+        if unix_timestamp_end is None:
+            LOG.info('End timestamp not given. Will use current timestamp as the end time')
+            unix_timestamp_end = int(time.time())
+
+        unix_timestamp_start = unix_timestamp_end - duration_seconds
+        LOG.debug(f'{unix_timestamp_start} is timestamp {duration_seconds} before end time: {unix_timestamp_end}')
+
+        _datetime_obj_time_end = datetime.datetime.utcfromtimestamp(unix_timestamp_end)
+        time_string_end = _datetime_obj_time_end.strftime(self.desired_time_format)
+        _datetime_obj_time_start = datetime.datetime.utcfromtimestamp(unix_timestamp_start)
+        time_string_start = _datetime_obj_time_start.strftime(self.desired_time_format)
+
+        time_range_text = f'{time_string_start} to {time_string_end}'
+        response_data['desired_human_time_range_utc'] = time_range_text
+        LOG.info(f'Time range (in UTC) for getting Tasks for Zone is:\n{time_range_text}')
+
+        response_get_last_task_completed = LastTaskCompleted(self.org, self.prop_id).get_for_zone_in_duration(pid, zone_id)
+        last_task_completed = response_get_last_task_completed['data']
+
+        text_get_last_task_completed = response_get_last_task_completed['text']
+
+        if last_task_completed is None:
+            LOG.warning(response_data['text'])
+            response_data['text'] = text_get_last_task_completed
+
+            if 'logs' in response_get_last_task_completed:
+                response_data['text'] += f' - See "logs"'
+                response_data['logs'] = response_get_last_task_completed['logs']
+
+            # response_data['text'] += f' {text_get_last_task_completed}'
+            return response_data
+
+        LOG.info(text_get_last_task_completed)
+        # No need to check Status of last_task_completed as the Status was already checked when this was
+        # obtained via: LastTaskCompleted.get_for_zone_in_duration()
+
+        # region Get action end time (AEnd) of this Completed Task
+        _get_aend_response = Task.get_action_end_time(last_task_completed)
+        _get_aend_text = _get_aend_response['text']
+
+        last_task_completed_timestamp = _get_aend_response['value']
+        # endregion
+
+        if last_task_completed_timestamp is None:
+            response_data['text'] += f' ({_get_aend_text})'
+            LOG.warning(response_data['text'])
+            return response_data
+
+        LOG.info(_get_aend_text)
+
+        response_data['value'] = last_task_completed_timestamp
+        response_data['text'] = 'Successfully obtained time of last task completed for this Zone in time range.'
+
+        _datetime_obj_task_aend = datetime.datetime.utcfromtimestamp(last_task_completed_timestamp)
+        time_string_task_and = _datetime_obj_task_aend.strftime(self.desired_time_format)
+
+        response_data['value_in_human_time_utc'] = time_string_task_and
+
+        return response_data
+
 
 class LastTaskCompletedTime:
 
@@ -207,8 +291,6 @@ class LastTaskCompletedTime:
         self.service_client = SCWorkforcemanagement()
         self.desired_time_format = human_time_fmt
 
-    # this gets Tasks for Zone and processes them.
-    # New version v2, below simplifies this to re-use the new utility: LastTaskCompleted.get_for_zone_in_duration()
     def get_for_zone(self, pid: str, zone_id: str, duration_seconds: int = 900, unix_timestamp_end: int = None) -> dict:
         """
         Gets time of last Task completed for Zone
@@ -387,7 +469,6 @@ class LastTaskCompletedTime:
             response_data['text'] = 'Successfully obtained value from latest completed Task in this time range.'
             return response_data
 
-    # V2 uses LastTaskCompleted.get_for_zone_in_duration()
     def get_for_zone_v2(self, pid: str, zone_id: str, duration_seconds: int = 900, unix_timestamp_end: int = None) -> dict:
         """
         Gets time of last Task completed for Zone
@@ -473,6 +554,7 @@ class LastTaskCompletedTime:
         return response_data
 
 
+# TODO: Prepare constructor and define properties
 class Task:
 
     AttrNameStatus = 'Status'

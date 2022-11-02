@@ -16,7 +16,7 @@ LOG = utils.get_logger_for_module(__name__, 'debug')
 HOST = "SC_WORKFORCEMANAGEMENT_HOST"
 PROTOCOL = "SC_WORKFORCEMANAGEMENT_HTTP_PROTOCOL"
 PORT = "SC_WORKFORCEMANAGEMENT_PORT"
-MOCK_RESPONSES = os.getenv('MOCK_RESPONSES', '0')
+MOCK_RESPONSES = os.getenv('SDK_MOCK_RESPONSES', '0')
 # region Names of ops in service
 OP_ASSIGN_INCIDENT = 'scteams.assignIncident'
 OP_CREATE_INCIDENT_NO_ASSIGNEE = 'scteams.createIncidentWithoutAssignee'
